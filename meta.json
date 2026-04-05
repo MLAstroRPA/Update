@@ -2,29 +2,29 @@
   "firmware 1.0.147.bin": {
     "description": "firmware",
     "type": "firmware",
-    "version": "1.2.13",
+    "version": "1.2.18",
     "size_bytes": 1186352,
-    "release_date_utc": "2026-04-05T02:45:34Z"
-  },
-  "firmware 1.2.13.bin": {
-    "description": "firmware",
-    "type": "firmware",
-    "version": "1.2.13",
-    "size_bytes": 1188912,
     "release_date_utc": "2026-04-05T02:45:34Z"
   },
   "spiffs 1.0.147.bin": {
     "description": "spiffs",
     "type": "spiffs",
-    "version": "1.2.13",
+    "version": "1.2.18",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-05T02:45:34Z"
   },
-  "spiffs 1.2.13.bin": {
-    "description": "spiffs",
+  "firmware 1.2.18.bin": {
+    "description": "display release date in shortdate",
+    "type": "firmware",
+    "version": "1.2.18",
+    "size_bytes": 1188912,
+    "release_date_utc": "2026-04-05T03:05:01Z"
+  },
+  "spiffs 1.2.18.bin": {
+    "description": "display release date in shortdate",
     "type": "spiffs",
-    "version": "1.2.13",
+    "version": "1.2.18",
     "size_bytes": 1507328,
-    "release_date_utc": "2026-04-05T02:45:34Z"
+    "release_date_utc": "2026-04-05T03:05:01Z"
   }
 }
