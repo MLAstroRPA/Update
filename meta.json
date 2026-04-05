@@ -1,74 +1,30 @@
 {
   "firmware 1.0.147.bin": {
-    "description": "Firmware release 1.2.3",
-    "description_source": "manual_or_suggested",
+    "description": "firmware",
     "type": "firmware",
-    "version": "1.2.5",
+    "version": "1.2.13",
     "size_bytes": 1186352,
-    "release_date_utc": "2026-04-04T17:32:39Z",
-    "updated_at_utc": "2026-04-04T17:48:47Z"
+    "release_date_utc": "2026-04-05T02:45:34Z"
   },
-  "firmware 1.2.3.bin": {
-    "description": "Firmware release 1.2.3",
-    "description_source": "manual_or_suggested",
+  "firmware 1.2.13.bin": {
+    "description": "firmware",
     "type": "firmware",
-    "version": "1.2.5",
+    "version": "1.2.13",
     "size_bytes": 1188912,
-    "release_date_utc": "2026-04-04T17:32:39Z",
-    "updated_at_utc": "2026-04-04T17:48:47Z"
+    "release_date_utc": "2026-04-05T02:45:34Z"
   },
   "spiffs 1.0.147.bin": {
-    "description": "SPIFFS/Web UI release 1.2.3",
-    "description_source": "manual_or_suggested",
+    "description": "spiffs",
     "type": "spiffs",
-    "version": "1.2.5",
+    "version": "1.2.13",
     "size_bytes": 1507328,
-    "release_date_utc": "2026-04-04T17:32:39Z",
-    "updated_at_utc": "2026-04-04T17:48:47Z"
+    "release_date_utc": "2026-04-05T02:45:34Z"
   },
-  "spiffs 1.2.3.bin": {
-    "description": "SPIFFS/Web UI release 1.2.3",
-    "description_source": "manual_or_suggested",
+  "spiffs 1.2.13.bin": {
+    "description": "spiffs",
     "type": "spiffs",
-    "version": "1.2.5",
+    "version": "1.2.13",
     "size_bytes": 1507328,
-    "release_date_utc": "2026-04-04T17:32:39Z",
-    "updated_at_utc": "2026-04-04T17:48:47Z"
-  },
-  "firmware 1.2.4.bin": {
-    "description": "New update meta 2",
-    "description_source": "manual_or_suggested",
-    "type": "firmware",
-    "version": "1.2.5",
-    "size_bytes": 1188912,
-    "release_date_utc": "2026-04-04T17:37:17Z",
-    "updated_at_utc": "2026-04-04T17:48:47Z"
-  },
-  "spiffs 1.2.4.bin": {
-    "description": "New UI",
-    "description_source": "manual_or_suggested",
-    "type": "spiffs",
-    "version": "1.2.5",
-    "size_bytes": 1507328,
-    "release_date_utc": "2026-04-04T17:37:17Z",
-    "updated_at_utc": "2026-04-04T17:48:47Z"
-  },
-  "firmware 1.2.5.bin": {
-    "description": "sửa cách build và release, đưa vào thư mục .vscode",
-    "description_source": "manual_or_suggested",
-    "type": "firmware",
-    "version": "1.2.5",
-    "size_bytes": 1188912,
-    "release_date_utc": "2026-04-04T17:48:47Z",
-    "updated_at_utc": "2026-04-04T17:48:47Z"
-  },
-  "spiffs 1.2.5.bin": {
-    "description": "sửa cách build và release, đưa vào thư mục .vscode",
-    "description_source": "manual_or_suggested",
-    "type": "spiffs",
-    "version": "1.2.5",
-    "size_bytes": 1507328,
-    "release_date_utc": "2026-04-04T17:48:47Z",
-    "updated_at_utc": "2026-04-04T17:48:47Z"
+    "release_date_utc": "2026-04-05T02:45:34Z"
   }
 }
