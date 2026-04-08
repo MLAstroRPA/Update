@@ -2,43 +2,57 @@
   "firmware 1.0.147.bin": {
     "description": "firmware",
     "type": "firmware",
-    "version": "1.2.19",
+    "version": "1.2.20",
     "size_bytes": 1186352,
     "release_date_utc": "2026-04-05T02:45:34Z"
   },
   "spiffs 1.0.147.bin": {
     "description": "spiffs",
     "type": "spiffs",
-    "version": "1.2.19",
+    "version": "1.2.20",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-05T02:45:34Z"
   },
   "firmware 1.2.18.bin": {
     "description": "display release date in shortdate",
     "type": "firmware",
-    "version": "1.2.19",
+    "version": "1.2.20",
     "size_bytes": 1188912,
     "release_date_utc": "2026-04-05T03:05:01Z"
   },
   "spiffs 1.2.18.bin": {
     "description": "display release date in shortdate",
     "type": "spiffs",
-    "version": "1.2.19",
+    "version": "1.2.20",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-05T03:05:01Z"
   },
   "firmware 1.2.19.bin": {
     "description": "Fix: maxspeed = 400;",
     "type": "firmware",
-    "version": "1.2.19",
+    "version": "1.2.20",
     "size_bytes": 1188912,
     "release_date_utc": "2026-04-07T06:06:04Z"
   },
   "spiffs 1.2.19.bin": {
     "description": "Fix: maxspeed = 400;",
     "type": "spiffs",
-    "version": "1.2.19",
+    "version": "1.2.20",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-07T06:06:04Z"
+  },
+  "firmware 1.2.20.bin": {
+    "description": "Thêm pop-up báo hardlimit khi di chuyển bằng cách nhấn giữ",
+    "type": "firmware",
+    "version": "1.2.20",
+    "size_bytes": 1190384,
+    "release_date_utc": "2026-04-08T07:29:38Z"
+  },
+  "spiffs 1.2.20.bin": {
+    "description": "Thêm pop-up báo hardlimit khi di chuyển bằng cách nhấn giữ",
+    "type": "spiffs",
+    "version": "1.2.20",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-04-08T07:29:38Z"
   }
 }
