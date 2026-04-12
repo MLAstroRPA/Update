@@ -30,6 +30,7 @@ let activeUsbManifestUrl = null;
 let activeUsbLocalBlobUrls = [];
 
 const ESP_WEB_TOOLS_MODULE_URL = 'https://unpkg.com/esp-web-tools@9/dist/web/install-button.js?module';
+const PUBLIC_USB_UPDATE_URL = 'https://mlastrorpa.github.io/Update/';
 const FLASH_OFFSETS = {
   bootloader: '0x1000',
   partitions: '0x8000',
@@ -2055,10 +2056,10 @@ function buildUpdateModalMarkup(catalog, options = {}) {
             This page is running in an insecure context (likely ESP HTTP IP). Web Serial is blocked here.
           </div>
           <div style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">
-            Open the localhost page with the same path to flash via USB:
-            <div id="localhost-target-url" style="margin-top:4px; word-break:break-all;"></div>
+            Open the Beta UI page to continue the USB Serial update flow:
+            <div id="beta-ui-target-url" style="margin-top:4px; word-break:break-all;"></div>
           </div>
-          <button type="button" class="btn btn-secondary btn-small" id="open-localhost-usb-page">Open localhost page</button>
+          <button type="button" class="btn btn-secondary btn-small" id="open-beta-ui-page">Open Beta UI</button>
         </div>
         <div id="update-modal-usb-host" class="hidden"></div>
       </div>
@@ -2147,10 +2148,8 @@ function getSelectedLocalParts() {
   return parts;
 }
 
-function getLocalhostEquivalentUrl() {
-  const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
-  const port = window.location.port ? `:${window.location.port}` : '';
-  return `${protocol}//127.0.0.1${port}${window.location.pathname}${window.location.search}${window.location.hash}`;
+function getPublicUsbUpdateUrl() {
+  return PUBLIC_USB_UPDATE_URL;
 }
 
 function refreshUsbContextWarning() {
@@ -2162,11 +2161,11 @@ function refreshUsbContextWarning() {
 
   if (!insecureContext) return;
 
-  const targetUrl = getLocalhostEquivalentUrl();
-  const urlEl = document.getElementById('localhost-target-url');
+  const targetUrl = getPublicUsbUpdateUrl();
+  const urlEl = document.getElementById('beta-ui-target-url');
   if (urlEl) urlEl.textContent = targetUrl;
 
-  const openBtn = document.getElementById('open-localhost-usb-page');
+  const openBtn = document.getElementById('open-beta-ui-page');
   if (openBtn) {
     openBtn.onclick = () => {
       window.open(targetUrl, '_blank', 'noopener');
