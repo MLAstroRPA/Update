@@ -2023,7 +2023,6 @@ function buildUpdateModalMarkup(catalog, options = {}) {
   const hasExtras = Boolean(catalog.extras.bootloader || catalog.extras.partitions);
 
   return `
-    <p style="margin-bottom:15px;">Select one release. If both firmware and SPIFFS exist for that version, the updater will install both automatically.</p>
     ${forceUsb ? `
       <div style="margin-bottom:12px; padding:10px; border:1px solid var(--warning); border-radius:6px; background: rgba(243, 156, 18, 0.08); color:var(--warning); font-size:12px;">
         Backend is not connected. USB Serial update has been selected automatically. OTA is unavailable right now.

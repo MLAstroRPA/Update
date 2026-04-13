@@ -131,7 +131,7 @@
     "version": "1.2.28",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-10T06:14:10Z"
-  }, 
+  },
   "firmware 1.2.30.bin": {
     "description": "Web UI: quy trình update mới, hoàn thiện cho cả update via OTA lẫn USB Serial",
     "type": "firmware",
@@ -146,18 +146,18 @@
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-12T13:55:16Z"
   },
-  "firmware 1.2.37.bin": {
+  "firmware 1.2.38.bin": {
     "description": "NewF: tạo Beta UI trên github page, cho phep USER update trên page https://mlastrorpa.github.io/Update/",
     "type": "firmware",
-    "version": "1.2.37",
+    "version": "1.2.38",
     "size_bytes": 1197040,
-    "release_date_utc": "2026-04-13T05:33:16Z"
+    "release_date_utc": "2026-04-13T06:04:22Z"
   },
-  "spiffs 1.2.37.bin": {
+  "spiffs 1.2.38.bin": {
     "description": "NewF: tạo Beta UI trên github page, cho phep USER update trên page https://mlastrorpa.github.io/Update/",
     "type": "spiffs",
-    "version": "1.2.37",
+    "version": "1.2.38",
     "size_bytes": 1507328,
-    "release_date_utc": "2026-04-13T05:33:16Z"
+    "release_date_utc": "2026-04-13T06:04:22Z"
   }
 }

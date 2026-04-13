@@ -14,8 +14,8 @@
         <h1 class="brand-title">MLAstro RPA</h1>
         <p class="brand-subtitle">Robotic Polar Alignment</p>
         <div class="version-info">
-          <span id="display-fw-ver">Firmware 1.2.37</span>
-          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.37</span>
+          <span id="display-fw-ver">Firmware 1.2.38</span>
+          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.38</span>
         </div>
       </div>
       <div class="header-tools">
@@ -568,11 +568,11 @@
               </div>
               <div class="config-item">
                 <label>AP IP Address:</label>
-                <input type="text" id="ap-ip" placeholder="1.2.37.1">
+                <input type="text" id="ap-ip" placeholder="1.2.38.1">
               </div>
               <div class="config-item">
                 <label>Subnet Mask:</label>
-                <input type="text" id="ap-subnet" placeholder="1.2.37.0">
+                <input type="text" id="ap-subnet" placeholder="1.2.38.0">
               </div>
             </div>
             
@@ -727,9 +727,11 @@
           <h2>🚀 System Update</h2><span class="toggle-icon">▼</span>
         </div>
         <div class="panel-content">
-          <p style="margin-bottom: 20px; font-size: 14px; color: var(--text-muted);">
-            Check the GitHub repository for the latest firmware and system data updates.
-          </p>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 14px; color: var(--text-muted);">
+            <span>Check for update from release <a href="https://github.com/MLAstroRPA/Update/tree/main" target="_blank">repository</a></span>
+            <a href="https://github.com/MLAstroRPA/Update/issues" target="_blank" style="color: var(--danger); white-space: nowrap;">🐛 Report issue</a>
+          </div>
+
           
           <div class="button-group" style="margin-bottom: 25px; justify-content: center;">
             <button class="btn btn-primary" onclick="checkAllUpdates()" style="padding: 10px 25px;">
