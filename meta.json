@@ -2,204 +2,176 @@
   "firmware 1.0.147.bin": {
     "description": "firmware",
     "type": "firmware",
-    "version": "1.2.36",
+    "version": "1.0.147",
     "size_bytes": 1186352,
     "release_date_utc": "2026-04-05T02:45:34Z"
   },
   "firmware 1.2.18.bin": {
     "description": "display release date in shortdate",
     "type": "firmware",
-    "version": "1.2.36",
+    "version": "1.2.18",
     "size_bytes": 1188912,
     "release_date_utc": "2026-04-05T03:05:01Z"
   },
   "spiffs 1.2.18.bin": {
     "description": "display release date in shortdate",
     "type": "spiffs",
-    "version": "1.2.36",
+    "version": "1.2.18",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-05T03:05:01Z"
   },
   "firmware 1.2.19.bin": {
     "description": "Fix: maxspeed = 400;",
     "type": "firmware",
-    "version": "1.2.36",
+    "version": "1.2.19",
     "size_bytes": 1188912,
     "release_date_utc": "2026-04-07T06:06:04Z"
   },
   "spiffs 1.2.19.bin": {
     "description": "Fix: maxspeed = 400;",
     "type": "spiffs",
-    "version": "1.2.36",
+    "version": "1.2.19",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-07T06:06:04Z"
   },
   "firmware 1.2.20.bin": {
     "description": "Thêm pop-up báo hardlimit khi di chuyển bằng cách nhấn giữ",
     "type": "firmware",
-    "version": "1.2.36",
+    "version": "1.2.20",
     "size_bytes": 1190384,
     "release_date_utc": "2026-04-08T07:29:38Z"
   },
   "spiffs 1.2.20.bin": {
     "description": "Thêm pop-up báo hardlimit khi di chuyển bằng cách nhấn giữ",
     "type": "spiffs",
-    "version": "1.2.36",
+    "version": "1.2.20",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-08T07:29:38Z"
   },
   "firmware 1.2.23.bin": {
     "description": "Thêm Factory Zero vào admin config",
     "type": "firmware",
-    "version": "1.2.36",
+    "version": "1.2.23",
     "size_bytes": 1193120,
     "release_date_utc": "2026-04-08T09:55:32Z"
   },
   "spiffs 1.2.23.bin": {
     "description": "Thêm Factory Zero vào admin config",
     "type": "spiffs",
-    "version": "1.2.36",
+    "version": "1.2.23",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-08T09:55:32Z"
   },
   "firmware 1.2.24.bin": {
     "description": "Fix: sửa lỗi không chạy relative sau update softlimit theo factory zero",
     "type": "firmware",
-    "version": "1.2.36",
+    "version": "1.2.24",
     "size_bytes": 1193216,
     "release_date_utc": "2026-04-09T04:58:14Z"
   },
   "spiffs 1.2.24.bin": {
     "description": "Fix: sửa lỗi không chạy relative sau update softlimit theo factory zero",
     "type": "spiffs",
-    "version": "1.2.36",
+    "version": "1.2.24",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-09T04:58:14Z"
   },
   "firmware 1.2.25.bin": {
     "description": "Ràng buộc user input softlimit",
     "type": "firmware",
-    "version": "1.2.36",
+    "version": "1.2.25",
     "size_bytes": 1193216,
     "release_date_utc": "2026-04-09T05:55:32Z"
   },
   "spiffs 1.2.25.bin": {
     "description": "Ràng buộc user input softlimit",
     "type": "spiffs",
-    "version": "1.2.36",
+    "version": "1.2.25",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-09T05:55:32Z"
   },
   "firmware 1.2.26.bin": {
     "description": "Lưu hướng bù backlash",
     "type": "firmware",
-    "version": "1.2.36",
+    "version": "1.2.26",
     "size_bytes": 1193504,
     "release_date_utc": "2026-04-10T00:53:00Z"
   },
   "spiffs 1.2.26.bin": {
     "description": "Lưu hướng bù backlash",
     "type": "spiffs",
-    "version": "1.2.36",
+    "version": "1.2.26",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-10T00:53:00Z"
   },
   "firmware 1.2.27.bin": {
     "description": "Fix: không reset bù backlash khi Set/reset Home và Factory Zero",
     "type": "firmware",
-    "version": "1.2.36",
+    "version": "1.2.27",
     "size_bytes": 1193440,
     "release_date_utc": "2026-04-10T01:15:49Z"
   },
   "spiffs 1.2.27.bin": {
     "description": "Fix: không reset bù backlash khi Set/rese",
     "type": "spiffs",
-    "version": "1.2.36",
+    "version": "1.2.27",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-10T01:15:49Z"
   },
   "firmware 1.2.28.bin": {
     "description": "PA trục Alt theo 2 chặng, chặng 1 đi xuống, chặng 2 đi lên, luôn kết thúc PA hướng lên. Công thức xem trong commit",
     "type": "firmware",
-    "version": "1.2.36",
+    "version": "1.2.28",
     "size_bytes": 1194448,
     "release_date_utc": "2026-04-10T06:14:10Z"
   },
   "spiffs 1.2.28.bin": {
     "description": "PA trục Alt theo 2 chặng, chặng 1 đi xuống, chặng 2 đi lên, luôn kết thúc PA hướng lên. Công thức xem trong commit",
     "type": "spiffs",
-    "version": "1.2.36",
+    "version": "1.2.28",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-10T06:14:10Z"
   },
   "firmware 1.2.29.bin": {
     "description": "Fix: Web UI, quy trình update mới",
     "type": "firmware",
-    "version": "1.2.36",
+    "version": "1.2.29",
     "size_bytes": 1197184,
     "release_date_utc": "2026-04-12T12:06:39Z"
   },
   "spiffs 1.2.29.bin": {
     "description": "Fix: Web UI, quy trình update mới",
     "type": "spiffs",
-    "version": "1.2.36",
+    "version": "1.2.29",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-12T12:06:39Z"
   },
   "firmware 1.2.30.bin": {
     "description": "Web UI: quy trình update mới, hoàn thiện cho cả update via OTA lẫn USB Serial",
     "type": "firmware",
-    "version": "1.2.36",
+    "version": "1.2.30",
     "size_bytes": 1197184,
     "release_date_utc": "2026-04-12T13:55:16Z"
   },
   "spiffs 1.2.30.bin": {
     "description": "Web UI: quy trình update mới, hoàn thiện cho cả update via OTA lẫn USB Serial",
     "type": "spiffs",
-    "version": "1.2.36",
+    "version": "1.2.30",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-12T13:55:16Z"
   },
-  "firmware 1.2.31.bin": {
+  "firmware 1.2.37.bin": {
     "description": "NewF: tạo Beta UI trên github page, cho phep USER update trên page https://mlastrorpa.github.io/Update/",
     "type": "firmware",
-    "version": "1.2.36",
-    "size_bytes": 1197184,
-    "release_date_utc": "2026-04-12T15:58:20Z"
-  },
-  "spiffs 1.2.31.bin": {
-    "description": "",
-    "type": "spiffs",
-    "version": "1.2.36",
-    "size_bytes": 1507328,
-    "release_date_utc": "2026-04-12T15:58:20Z"
-  },
-  "firmware 1.2.33.bin": {
-    "description": "Sửa cơ chế RELEASE source, coppy thêm 2 file bin và 3 file data",
-    "type": "firmware",
-    "version": "1.2.36",
-    "size_bytes": 1197184,
-    "release_date_utc": "2026-04-12T16:12:41Z"
-  },
-  "spiffs 1.2.33.bin": {
-    "description": "Sửa cơ chế RELEASE source, coppy thêm 2 file bin và 3 file data",
-    "type": "spiffs",
-    "version": "1.2.36",
-    "size_bytes": 1507328,
-    "release_date_utc": "2026-04-12T16:12:41Z"
-  },
-  "firmware 1.2.36.bin": {
-    "description": "Sửa cơ chế RELEASE, chỉ khi nào RELEASE mới chạy bump → build → copy → sync metadata",
-    "type": "firmware",
-    "version": "1.2.36",
+    "version": "1.2.37",
     "size_bytes": 1197040,
-    "release_date_utc": "2026-04-12T16:50:13Z"
+    "release_date_utc": "2026-04-13T05:33:16Z"
   },
-  "spiffs 1.2.36.bin": {
-    "description": "Sửa cơ chế RELEASE, chỉ khi nào RELEASE mới chạy bump → build → copy → sync metadata",
+  "spiffs 1.2.37.bin": {
+    "description": "NewF: tạo Beta UI trên github page, cho phep USER update trên page https://mlastrorpa.github.io/Update/",
     "type": "spiffs",
-    "version": "1.2.36",
+    "version": "1.2.37",
     "size_bytes": 1507328,
-    "release_date_utc": "2026-04-12T16:50:13Z"
+    "release_date_utc": "2026-04-13T05:33:16Z"
   }
 }
