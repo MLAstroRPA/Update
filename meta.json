@@ -119,33 +119,19 @@
     "release_date_utc": "2026-04-10T01:15:49Z"
   },
   "firmware 1.2.28.bin": {
-    "description": "PA trục Alt theo 2 chặng, chặng 1 đi xuống, chặng 2 đi lên, luôn kết thúc PA hướng lên. Công thức xem trong commit",
+    "description": "PA trục Alt theo 2 chặng, chặng 1 đi xuống, chặng 2 đi lên, luôn kết thúc PA hướng lên.",
     "type": "firmware",
     "version": "1.2.28",
     "size_bytes": 1194448,
     "release_date_utc": "2026-04-10T06:14:10Z"
   },
   "spiffs 1.2.28.bin": {
-    "description": "PA trục Alt theo 2 chặng, chặng 1 đi xuống, chặng 2 đi lên, luôn kết thúc PA hướng lên. Công thức xem trong commit",
+    "description": "PA trục Alt theo 2 chặng, chặng 1 đi xuống, chặng 2 đi lên, luôn kết thúc PA hướng lên.",
     "type": "spiffs",
     "version": "1.2.28",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-10T06:14:10Z"
-  },
-  "firmware 1.2.29.bin": {
-    "description": "Fix: Web UI, quy trình update mới",
-    "type": "firmware",
-    "version": "1.2.29",
-    "size_bytes": 1197184,
-    "release_date_utc": "2026-04-12T12:06:39Z"
-  },
-  "spiffs 1.2.29.bin": {
-    "description": "Fix: Web UI, quy trình update mới",
-    "type": "spiffs",
-    "version": "1.2.29",
-    "size_bytes": 1507328,
-    "release_date_utc": "2026-04-12T12:06:39Z"
-  },
+  }, 
   "firmware 1.2.30.bin": {
     "description": "Web UI: quy trình update mới, hoàn thiện cho cả update via OTA lẫn USB Serial",
     "type": "firmware",
