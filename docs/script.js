@@ -344,8 +344,15 @@ function updateUI(data) {
   if(data.status){
     console.log('WebSocket status:', data.status);
     if(data.status === 'configSaved'){
-      showMessage('Settings saved on device', '#save-message', 3000);
+      showMessage('✓ Settings saved to flash.', '#save-message', 3000);
+    } else if(data.status === 'configApplied'){
+      showMessage('⚡ Settings applied (not saved). Reboot to discard.', '#save-message', 4000);
     }
+  }
+
+  // Config nhận từ serial (broadcastConfig) - tương đương nhấn Apply
+  if (data.config_pushed && data.motor) {
+    showMessage('⚡ Config received from device. Applied.', '#save-message', 4000);
   }
   
   // Xử lý phản hồi đăng nhập Admin
@@ -1064,6 +1071,27 @@ function collectConfig() {
   };
 }
 
+// ===== CONFIG APPLY (no reboot, no FRAM save) =====
+function applyConfigOnly() {
+  if (!validateSoftLimitsBeforeSave()) return;
+  const config = collectConfig();
+  sendCommand('applyConfig', config);
+  toggleStepsDisplay(config.motor.show_steps);
+  toggleMonitorPanel(config.motor.show_hardlimit_monitor);
+  showMessage('⚡ Settings applied (not saved). Reboot to discard.', '#save-message', 4000);
+}
+
+const applyBtn = document.getElementById('apply-btn');
+if (applyBtn) applyBtn.addEventListener('click', applyConfigOnly);
+
+const rebootBtn = document.getElementById('reboot-btn');
+if (rebootBtn) rebootBtn.addEventListener('click', () => {
+  showModal('Reboot Device', 'Reboot ESP32 now? Any unapplied or unsaved changes will be discarded.', [
+    { text: 'Reboot', class: 'btn-danger', callback: () => { sendCommand('reboot', {}); } },
+    { text: 'Cancel', class: 'btn-secondary' }
+  ]);
+});
+
 // ===== CONFIG SAVE =====
 const saveAllBtn = document.getElementById('save-all-btn');
 if(saveAllBtn) saveAllBtn.addEventListener('click', () => {
@@ -1616,6 +1644,7 @@ function renderWifiList(networks) {
 
 // ===== LOGGING =====
 function appendLog(message) {
+  if (message.includes("Manual stop sequence completed. Hardlimit re-enabled.")) return;
   const now = new Date();
   const time = now.toLocaleTimeString();
   const entry = document.createElement('div');
@@ -1642,6 +1671,8 @@ function appendLog(message) {
   fullText = fullText.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); // Escape HTML cơ bản
   if (fullText.includes("(Backlash applied)")) {
     fullText = fullText.replace(/\(Backlash applied\)/g, '<span class="log-backlash">(Backlash applied)</span>');
+  } else if (fullText.includes("Backlash applied")) {
+    fullText = fullText.replace(/Backlash applied/g, '<span class="log-backlash">(Backlash applied)</span>');
   }
   
   entry.innerHTML = fullText;
@@ -2866,6 +2897,21 @@ function initMotorModeChangeHandlers() {
       ]);
     }
   };
+
+// ===========================
+// SCROLL TO BOTTOM BUTTON
+// ===========================
+(function() {
+  const btn = document.getElementById('scroll-bottom-btn');
+  if (!btn) return;
+  window.addEventListener('scroll', function() {
+    const nearBottom = (window.innerHeight + window.scrollY) >= (document.body.scrollHeight - 80);
+    btn.classList.toggle('visible', !nearBottom && window.scrollY > 200);
+  }, { passive: true });
+  btn.addEventListener('click', function() {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  });
+})();
 
   const onMstepChanged = (selectEl) => {
     if (isUpdatingFromWS) return;

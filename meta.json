@@ -159,5 +159,19 @@
     "version": "1.2.38",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-13T06:04:22Z"
+  },
+  "firmware 1.2.40.bin": {
+    "description": "BIG FIX: Thêm nút nhấn APPLY SETTINGS với nhiều thay đổi quan trọng liên quan đến việc lưu cài đặt",
+    "type": "firmware",
+    "version": "1.2.40",
+    "size_bytes": 1203696,
+    "release_date_utc": "2026-04-25T06:21:43Z"
+  },
+  "spiffs 1.2.40.bin": {
+    "description": "BIG FIX: Thêm nút nhấn APPLY SETTINGS với nhiều thay đổi quan trọng liên quan đến việc lưu cài đặt",
+    "type": "spiffs",
+    "version": "1.2.40",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-04-25T06:21:43Z"
   }
 }

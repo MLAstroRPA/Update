@@ -755,6 +755,56 @@ body {
   gap: 10px;
 }
 
+/* SCROLL TO BOTTOM BUTTON */
+.scroll-bottom-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 999;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  color: transparent;
+  border: 1.5px solid rgba(80,80,80,0.35);
+  font-size: 0;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s, background 0.2s;
+  transform: translateY(8px);
+  backdrop-filter: blur(4px);
+}
+.scroll-bottom-btn::after {
+  content: '';
+  display: block;
+  width: 11px;
+  height: 11px;
+  border-right: 2.5px solid #2c3e50;
+  border-bottom: 2.5px solid #2c3e50;
+  transform: rotate(45deg) translateY(-3px);
+}
+[data-theme="dark"] .scroll-bottom-btn::after {
+  border-color: #e0e0e0;
+}
+@media (prefers-color-scheme: dark) {
+  .scroll-bottom-btn::after {
+    border-color: #e0e0e0;
+  }
+}
+.scroll-bottom-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.scroll-bottom-btn:hover {
+  background: rgba(255,255,255,0.75);
+}
+
 /* FOOTER */
 .footer {
   background: var(--header-bg);
@@ -1217,7 +1267,7 @@ input, textarea {
 
 .save-panel .panel-content {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   align-items: stretch;
 }

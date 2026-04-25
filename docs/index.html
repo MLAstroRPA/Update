@@ -14,8 +14,8 @@
         <h1 class="brand-title">MLAstro RPA</h1>
         <p class="brand-subtitle">Robotic Polar Alignment</p>
         <div class="version-info">
-          <span id="display-fw-ver">Firmware 1.2.38</span>
-          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.38</span>
+          <span id="display-fw-ver">Firmware 1.2.40</span>
+          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.40</span>
         </div>
       </div>
       <div class="header-tools">
@@ -568,11 +568,11 @@
               </div>
               <div class="config-item">
                 <label>AP IP Address:</label>
-                <input type="text" id="ap-ip" placeholder="1.2.38.1">
+                <input type="text" id="ap-ip" placeholder="1.2.40.1">
               </div>
               <div class="config-item">
                 <label>Subnet Mask:</label>
-                <input type="text" id="ap-subnet" placeholder="1.2.38.0">
+                <input type="text" id="ap-subnet" placeholder="1.2.40.0">
               </div>
             </div>
             
@@ -782,7 +782,9 @@
           <h2>💾 Configuration Management</h2><span class="toggle-icon">▼</span>
         </div>
         <div class="panel-content">
-          <button class="btn btn-success btn-large" id="save-all-btn">✓ SAVE ALL SETTINGS & REBOOT</button>
+          <button class="btn btn-primary btn-large" id="apply-btn">⚡ APPLY SETTINGS</button>
+          <button class="btn btn-success btn-large" id="save-all-btn">✓ SAVE ALL & REBOOT</button>
+          <button class="btn btn-warning btn-large" id="reboot-btn">⏻ REBOOT</button>
           <button class="btn btn-secondary btn-large admin-btn" id="admin-config-btn">🔑 Admin Config</button>
           <button class="btn btn-danger btn-large" id="factory-reset-btn">⚠️ FACTORY RESET</button>
           <div id="save-message" class="inline-message save-msg"></div>
@@ -807,6 +809,9 @@
       </div>
     </div>
   </div>
+
+  <!-- SCROLL TO BOTTOM BUTTON -->
+  <button id="scroll-bottom-btn" class="scroll-bottom-btn" title="Scroll to bottom"></button>
 
   <!-- FOOTER -->
   <footer class="footer">
