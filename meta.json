@@ -173,5 +173,19 @@
     "version": "1.2.40",
     "size_bytes": 1507328,
     "release_date_utc": "2026-04-25T06:21:43Z"
+  },
+  "firmware 1.2.41.bin": {
+    "description": "Fix: implement serial heartbeat watchdog, if lost serrial control auto excute ESTOP",
+    "type": "firmware",
+    "version": "1.2.41",
+    "size_bytes": 1204048,
+    "release_date_utc": "2026-05-13T00:31:41Z"
+  },
+  "spiffs 1.2.41.bin": {
+    "description": "Fix: implement serial heartbeat watchdog, if lost serrial control auto excute ESTOP",
+    "type": "spiffs",
+    "version": "1.2.41",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-05-13T00:31:41Z"
   }
 }
