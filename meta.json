@@ -187,5 +187,19 @@
     "version": "1.2.41",
     "size_bytes": 1507328,
     "release_date_utc": "2026-05-13T00:31:41Z"
+  },
+  "firmware 1.2.42.bin": {
+    "description": "Fix: homming speed; Uses a buzzer on GPIO 17 to provide audible feedback for different states",
+    "type": "firmware",
+    "version": "1.2.42",
+    "size_bytes": 1211040,
+    "release_date_utc": "2026-06-19T08:15:36Z"
+  },
+  "spiffs 1.2.42.bin": {
+    "description": "Fix: homming speed; Uses a buzzer on GPIO 17 to provide audible feedback for different states",
+    "type": "spiffs",
+    "version": "1.2.42",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-06-19T08:15:36Z"
   }
 }
