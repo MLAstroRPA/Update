@@ -201,5 +201,19 @@
     "version": "1.2.42",
     "size_bytes": 1507328,
     "release_date_utc": "2026-06-19T08:15:36Z"
+  },
+  "firmware 1.2.43.bin": {
+    "description": "Replace \"take control-handshake\" logic with a **single-session** if system is freehand. WIFI password now only query with single command",
+    "type": "firmware",
+    "version": "1.2.43",
+    "size_bytes": 1212416,
+    "release_date_utc": "2026-07-08T04:32:19Z"
+  },
+  "spiffs 1.2.43.bin": {
+    "description": "Replace \"take control-handshake\" logic with a **single-session** if system is freehand. WIFI password now only query with single command",
+    "type": "spiffs",
+    "version": "1.2.43",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-07-08T04:32:19Z"
   }
 }

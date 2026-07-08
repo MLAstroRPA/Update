@@ -14,8 +14,8 @@
         <h1 class="brand-title">MLAstro RPA</h1>
         <p class="brand-subtitle">Robotic Polar Alignment</p>
         <div class="version-info">
-          <span id="display-fw-ver">Firmware 1.2.42</span>
-          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.42</span>
+          <span id="display-fw-ver">Firmware 1.2.43</span>
+          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.43</span>
         </div>
       </div>
       <div class="header-tools">
@@ -568,11 +568,11 @@
               </div>
               <div class="config-item">
                 <label>AP IP Address:</label>
-                <input type="text" id="ap-ip" placeholder="1.2.42.1">
+                <input type="text" id="ap-ip" placeholder="1.2.43.1">
               </div>
               <div class="config-item">
                 <label>Subnet Mask:</label>
-                <input type="text" id="ap-subnet" placeholder="1.2.42.0">
+                <input type="text" id="ap-subnet" placeholder="1.2.43.0">
               </div>
             </div>
             
@@ -807,6 +807,17 @@
       <div id="modal-footer">
         <!-- Buttons will be injected by JS -->
       </div>
+    </div>
+  </div>
+
+  <!-- CONNECTION LOCKED OVERLAY (không thể đóng, chỉ có nút Close Page) -->
+  <div id="connection-locked-overlay" class="connection-locked-overlay hidden">
+    <div class="connection-locked-card">
+      <div class="connection-locked-icon">🔒</div>
+      <h2 class="connection-locked-title">Connection Rejected</h2>
+      <p id="connection-locked-reason" class="connection-locked-reason"></p>
+      <p class="connection-locked-hint">The system is currently busy. Only one control session is allowed at a time.</p>
+      <button id="connection-locked-close-btn" class="btn btn-danger btn-large">✕ Close This Page</button>
     </div>
   </div>
 

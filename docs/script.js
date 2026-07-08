@@ -110,6 +110,56 @@ function hideModal() {
   activeSoftLimitErrorKey = '';
 }
 
+// ===== CONNECTION LOCKED OVERLAY =====
+// Hiển thị overlay khóa toàn màn hình khi bị từ chối kết nối
+// Overlay này KHÔNG THỂ ĐÓNG, chỉ có nút "Close This Page"
+function showConnectionLockedOverlay(reason) {
+  const overlay = document.getElementById('connection-locked-overlay');
+  const reasonEl = document.getElementById('connection-locked-reason');
+  if (!overlay) return;
+
+  if (reasonEl) {
+    reasonEl.textContent = reason;
+  }
+
+  // Ẩn toàn bộ nội dung trang, chỉ hiện overlay
+  overlay.classList.remove('hidden');
+
+  // Vô hiệu hóa tất cả tương tác với trang bên dưới
+  document.body.style.overflow = 'hidden';
+
+  // Dừng mọi kết nối đang chờ
+  if (reconnectInterval) {
+    clearInterval(reconnectInterval);
+    reconnectInterval = null;
+  }
+}
+
+// Gắn sự kiện cho nút "Close This Page"
+document.addEventListener('DOMContentLoaded', () => {
+  const closeBtn = document.getElementById('connection-locked-close-btn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      // Thử đóng tab/cửa sổ, nếu không được thì chuyển hướng
+      if (window.close) {
+        window.close();
+      }
+      // Fallback: nếu window.close() không hoạt động (trên mobile hoặc tab không được mở bởi script)
+      // thì hiển thị thông báo yêu cầu người dùng tự đóng
+      setTimeout(() => {
+        document.body.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0D1B2B;color:#e0e0e0;font-family:sans-serif;text-align:center;padding:20px;">
+            <div>
+              <div style="font-size:64px;margin-bottom:16px;">🔒</div>
+              <h2 style="color:#e74c3c;margin-bottom:12px;">Please Close This Tab</h2>
+              <p style="color:#a0a0a0;">The connection was rejected. Please manually close this browser tab.</p>
+            </div>
+          </div>`;
+      }, 300);
+    });
+  }
+});
+
 function hideOtaProgressUI() {
   const progressContainer = document.getElementById('ota-progress-container');
   if (progressContainer) progressContainer.classList.add('hidden');
@@ -300,6 +350,24 @@ function connectWebSocket() {
   ws.onmessage = (event) => {
     try {
       const data = JSON.parse(event.data);
+
+      // --- CONNECTION CONTROL: Xử lý thông báo từ chối kết nối từ Server ---
+      if (data.cmd === 'connectionRejected') {
+        console.warn('WebSocket connection rejected:', data.reason);
+        showConnectionLockedOverlay(data.reason || 'System is busy.');
+        // Đóng WebSocket và KHÔNG auto-reconnect
+        if (ws) {
+          ws.onclose = null; // Ngăn onclose gọi reconnect
+          ws.close();
+          ws = null;
+        }
+        if (reconnectInterval) {
+          clearInterval(reconnectInterval);
+          reconnectInterval = null;
+        }
+        return;
+      }
+
       updateUI(data);
     } catch (e) {
       console.error('JSON parse error:', e);
@@ -316,7 +384,7 @@ function connectWebSocket() {
     console.log('WebSocket closed');
     markBackendDisconnected();
     updateWifiIcon(-1000); // Hiển thị mất kết nối
-    // Attempt reconnect every 3 seconds
+    // Attempt reconnect every 3 seconds (trừ khi đã bị từ chối)
     if (!reconnectInterval) {
       reconnectInterval = setInterval(connectWebSocket, 3000);
     }
