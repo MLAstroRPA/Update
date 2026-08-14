@@ -243,5 +243,19 @@
     "version": "1.2.45",
     "size_bytes": 1507328,
     "release_date_utc": "2026-08-14T10:39:12Z"
+  },
+  "firmware 1.2.46.bin": {
+    "description": "Fix: Overshoot conflict with antibacklash",
+    "type": "firmware",
+    "version": "1.2.46",
+    "size_bytes": 1213008,
+    "release_date_utc": "2026-08-14T11:23:17Z"
+  },
+  "spiffs 1.2.46.bin": {
+    "description": "Fix: Overshoot conflict with antibacklash",
+    "type": "spiffs",
+    "version": "1.2.46",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-14T11:23:17Z"
   }
 }
