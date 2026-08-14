@@ -257,5 +257,19 @@
     "version": "1.2.46",
     "size_bytes": 1507328,
     "release_date_utc": "2026-08-14T11:23:17Z"
+  },
+  "firmware 1.2.47.bin": {
+    "description": "fIX: Change overshootovershoot configuration with degree, minute, and second inputs",
+    "type": "firmware",
+    "version": "1.2.47",
+    "size_bytes": 1214512,
+    "release_date_utc": "2026-08-14T11:44:17Z"
+  },
+  "spiffs 1.2.47.bin": {
+    "description": "fIX: Change overshootovershoot configuration with degree, minute, and second inputs",
+    "type": "spiffs",
+    "version": "1.2.47",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-14T11:44:17Z"
   }
 }
