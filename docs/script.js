@@ -878,6 +878,18 @@ function updateUI(data) {
       const os = document.getElementById('enable-overshoot');
       if (os) os.checked = data.backlash.overshoot;
     }
+    if (data.backlash.overshoot_d !== undefined) {
+      const d = document.getElementById('overshoot-deg');
+      if (d) d.value = data.backlash.overshoot_d;
+    }
+    if (data.backlash.overshoot_m !== undefined) {
+      const m = document.getElementById('overshoot-min');
+      if (m) m.value = data.backlash.overshoot_m;
+    }
+    if (data.backlash.overshoot_s !== undefined) {
+      const s = document.getElementById('overshoot-sec');
+      if (s) s.value = data.backlash.overshoot_s;
+    }
   }
 
   // Cập nhật Alignment Params
@@ -1123,7 +1135,10 @@ function collectConfig() {
       enable: document.getElementById('enable-backlash').checked,
       az_steps: parseInt(document.getElementById('backlash-az').value),
       alt_steps: parseInt(document.getElementById('backlash-alt').value),
-      overshoot: document.getElementById('enable-overshoot').checked
+      overshoot: document.getElementById('enable-overshoot').checked,
+      overshoot_d: clampInt(document.getElementById('overshoot-deg').value, 0, 10),
+      overshoot_m: clampInt(document.getElementById('overshoot-min').value, 0, 59),
+      overshoot_s: clampInt(document.getElementById('overshoot-sec').value, 0, 59)
     },
     relative: {
       mode: document.getElementById('move-mode-toggle').checked,

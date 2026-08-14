@@ -14,8 +14,8 @@
         <h1 class="brand-title">MLAstro RPA</h1>
         <p class="brand-subtitle">Robotic Polar Alignment</p>
         <div class="version-info">
-          <span id="display-fw-ver">Firmware 1.2.46</span>
-          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.46</span>
+          <span id="display-fw-ver">Firmware 1.2.47</span>
+          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.47</span>
         </div>
       </div>
       <div class="header-tools">
@@ -537,6 +537,14 @@
               Enable Overshoot Routine
             </label>
           </div>
+          <div class="config-item" style="margin-bottom: 15px;">
+            <label>Overshoot Amount:</label>
+            <div class="dms-row">
+              <input type="number" id="overshoot-deg" class="input-field dms-field" placeholder="Deg" min="0" max="10" step="1" value="0">°
+              <input type="number" id="overshoot-min" class="input-field dms-field" placeholder="Min" min="0" max="59" step="1" value="0">'
+              <input type="number" id="overshoot-sec" class="input-field dms-field" placeholder="Sec" min="0" max="59" step="1" value="0">"
+            </div>
+          </div>
           <div class="config-grid">
             <div class="config-item">
               <label>AZ Backlash:</label>
@@ -574,11 +582,11 @@
               </div>
               <div class="config-item">
                 <label>AP IP Address:</label>
-                <input type="text" id="ap-ip" placeholder="1.2.46.1">
+                <input type="text" id="ap-ip" placeholder="1.2.47.1">
               </div>
               <div class="config-item">
                 <label>Subnet Mask:</label>
-                <input type="text" id="ap-subnet" placeholder="1.2.46.0">
+                <input type="text" id="ap-subnet" placeholder="1.2.47.0">
               </div>
             </div>
             
