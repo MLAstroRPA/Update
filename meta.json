@@ -215,5 +215,19 @@
     "version": "1.2.43",
     "size_bytes": 1507328,
     "release_date_utc": "2026-07-08T04:32:19Z"
+  },
+  "firmware 1.2.44.bin": {
+    "description": "Add Enable Overshoot Routine button",
+    "type": "firmware",
+    "version": "1.2.44",
+    "size_bytes": 1212992,
+    "release_date_utc": "2026-08-14T10:15:07Z"
+  },
+  "spiffs 1.2.44.bin": {
+    "description": "Add Enable Overshoot Routine button",
+    "type": "spiffs",
+    "version": "1.2.44",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-14T10:15:07Z"
   }
 }

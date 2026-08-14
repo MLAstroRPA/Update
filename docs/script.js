@@ -874,6 +874,10 @@ function updateUI(data) {
       const alt = document.getElementById('backlash-alt');
       if (alt) alt.value = data.backlash.alt_steps;
     }
+    if (data.backlash.overshoot !== undefined) {
+      const os = document.getElementById('enable-overshoot');
+      if (os) os.checked = data.backlash.overshoot;
+    }
   }
 
   // Cập nhật Alignment Params
@@ -1118,7 +1122,8 @@ function collectConfig() {
     backlash: {
       enable: document.getElementById('enable-backlash').checked,
       az_steps: parseInt(document.getElementById('backlash-az').value),
-      alt_steps: parseInt(document.getElementById('backlash-alt').value)
+      alt_steps: parseInt(document.getElementById('backlash-alt').value),
+      overshoot: document.getElementById('enable-overshoot').checked
     },
     relative: {
       mode: document.getElementById('move-mode-toggle').checked,
