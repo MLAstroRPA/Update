@@ -229,5 +229,19 @@
     "version": "1.2.44",
     "size_bytes": 1507328,
     "release_date_utc": "2026-08-14T10:15:07Z"
+  },
+  "firmware 1.2.45.bin": {
+    "description": "Fix: Overshoot apply only for PA moving down",
+    "type": "firmware",
+    "version": "1.2.45",
+    "size_bytes": 1213104,
+    "release_date_utc": "2026-08-14T10:39:12Z"
+  },
+  "spiffs 1.2.45.bin": {
+    "description": "Fix: Overshoot apply only for PA moving down",
+    "type": "spiffs",
+    "version": "1.2.45",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-14T10:39:12Z"
   }
 }
