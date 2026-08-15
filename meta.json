@@ -271,5 +271,19 @@
     "version": "1.2.47",
     "size_bytes": 1507328,
     "release_date_utc": "2026-08-14T11:44:17Z"
+  },
+  "firmware 1.2.48.bin": {
+    "description": "FIX: Save data to FRAM missing",
+    "type": "firmware",
+    "version": "1.2.48",
+    "size_bytes": 1214576,
+    "release_date_utc": "2026-08-15T02:52:36Z"
+  },
+  "spiffs 1.2.48.bin": {
+    "description": "FIX: Save data to FRAM missing",
+    "type": "spiffs",
+    "version": "1.2.48",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-15T02:52:36Z"
   }
 }
