@@ -4,6 +4,36 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 
 ---
 
+## [1.2.58] - 2026-08-17
+
+
+### 🔄 Added — Swap Az-Alt Motor Ports
+
+New **Swap Az-Alt motor ports** checkbox in Admin Config (right above "Show hardlimit monitor").
+
+- Persisted to FRAM (marker `0xAA`); takes effect after reboot.
+- Swaps, in software, the two motor ports:
+  - STEP/DIR pins (`AccelStepper::setPins()` runtime remap).
+  - Logical TMC2209 driver mapping via `AZ_DRV` / `ALT_DRV` pointers.
+  - DIAG pin mapping (StallGuard / hard-limit monitor and protection).
+
+**Files:** `lib/AccelStepper/src/AccelStepper.{h,cpp}`, `src/FRAM/ConfigManager.h`, `src/Steper/Steper.{h,cpp}`, `src/main.cpp`, `src/Serial/SerialControl.cpp`, `src/Web/WebControl.cpp`, `data/index.html`, `data/script.js`
+
+### ⏱️ Changed — 5 s Non-Blocking Reboot Countdown
+
+- Serial `Save&Reboot` now counts down **5 s without blocking**: `networkTask` keeps processing logs, FRAM saves and telemetry while printing one dot per second, then reboots.
+- Web **SAVE ALL & REBOOT** countdown increased from 3 s to 5 s.
+
+**Files:** `src/Serial/SerialControl.cpp`, `src/Serial/SerialControl.h`, `src/main.cpp`, `data/script.js`
+
+### 🟢 Fixed — REBOOTING Status Maintained Until Reboot
+
+- Backend reports `sys_status = "REBOOTING"` while a reboot countdown is pending.
+- Frontend keeps the `REBOOTING` status (periodic `READY` updates no longer overwrite it) and resets on a fresh WebSocket connection.
+
+**Files:** `src/main.cpp`, `data/script.js`
+
+
 ## [1.2.57] - 2026-08-17
 
 ### 🔒 Changed — Explicit Handshake Ownership (Serial vs Web)

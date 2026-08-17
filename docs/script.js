@@ -12,6 +12,7 @@ let isUpdatingFromWS = false; // Cờ chặn gửi lệnh lưu khi đang cập n
 let backendWsConnected = false;
 let backendWsChecked = false;
 let systemLocked = false; // true = đang do PC (Serial) điều khiển -> khóa nút điều khiển web
+let isRebooting = false; // giữ trạng thái REBOOTING cho đến khi reboot hoàn tất
 
 // Chart Variables
 let sgChartCtx = null;
@@ -344,6 +345,7 @@ function connectWebSocket() {
     console.log('WebSocket connected');
     backendWsConnected = true;
     backendWsChecked = true;
+    isRebooting = false; // reset trạng thái chờ reboot khi kết nối mới
     // Trạng thái sẽ được cập nhật khi nhận gói tin đầu tiên chứa RSSI
     if (reconnectInterval) clearInterval(reconnectInterval);
   };
@@ -666,22 +668,27 @@ function updateUI(data) {
   }
   
   if (data.sys_status !== undefined) {
-    const el = document.getElementById('system-status');
-    if (el) {
-      el.textContent = data.sys_status;
-      el.classList.add('font-bold');
-      
-      // Cập nhật màu sắc trạng thái
-      el.classList.remove('status-text-success', 'status-text-danger', 'status-text-warning');
-      let colorClass = 'status-text-success';
-      if (data.sys_status === 'ERROR') colorClass = 'status-text-danger';
-      else if (data.sys_status === 'REBOOTING') colorClass = 'status-text-success';
-      else if (data.sys_status !== 'READY') colorClass = 'status-text-warning';
-      el.classList.add(colorClass);
+    if (data.sys_status === 'REBOOTING') isRebooting = true;
+    if (isRebooting && data.sys_status !== 'REBOOTING') {
+      // Đang chờ reboot: giữ nguyên trạng thái REBOOTING, không để bị ghi đè
+    } else {
+      const el = document.getElementById('system-status');
+      if (el) {
+        el.textContent = data.sys_status;
+        el.classList.add('font-bold');
+        
+        // Cập nhật màu sắc trạng thái
+        el.classList.remove('status-text-success', 'status-text-danger', 'status-text-warning');
+        let colorClass = 'status-text-success';
+        if (data.sys_status === 'ERROR') colorClass = 'status-text-danger';
+        else if (data.sys_status === 'REBOOTING') colorClass = 'status-text-success';
+        else if (data.sys_status !== 'READY') colorClass = 'status-text-warning';
+        el.classList.add(colorClass);
 
-      // Khóa/Mở khóa các nút điều khiển dựa trên trạng thái lỗi
-      hasSystemError = (data.sys_status === 'ERROR');
-      setSystemLocked(hasSystemError || isSystemCalibrating);
+        // Khóa/Mở khóa các nút điều khiển dựa trên trạng thái lỗi
+        hasSystemError = (data.sys_status === 'ERROR');
+        setSystemLocked(hasSystemError || isSystemCalibrating);
+      }
     }
   }
 
@@ -857,6 +864,10 @@ function updateUI(data) {
         cb.checked = data.motor.show_hardlimit_monitor;
         toggleMonitorPanel(data.motor.show_hardlimit_monitor);
       }
+    }
+    if (data.motor.swap_az_alt !== undefined) {
+      const sa = document.getElementById('swap-az-alt');
+      if (sa) sa.checked = data.motor.swap_az_alt;
     }
     if (data.serial !== undefined) {
       const sMap = { baud: 'serial-baud', databits: 'serial-databits', stopbits: 'serial-stopbits', parity: 'serial-parity' };
@@ -1161,7 +1172,8 @@ function collectConfig() {
       stall_time: parseInt(document.getElementById('stall-time').value),
       escape_rotations: parseInt(document.getElementById('escape-rotations').value),
       enable_hardlimit: document.getElementById('enable-hardlimit').checked,
-      show_hardlimit_monitor: document.getElementById('show-hardlimit-monitor').checked
+      show_hardlimit_monitor: document.getElementById('show-hardlimit-monitor').checked,
+      swap_az_alt: document.getElementById('swap-az-alt') ? document.getElementById('swap-az-alt').checked : false
     },
     serial: {
       baud: parseInt(document.getElementById('serial-baud').value) || 115200,
@@ -1233,7 +1245,7 @@ if(saveAllBtn) saveAllBtn.addEventListener('click', () => {
   toggleStepsDisplay(config.motor.show_steps); // Cập nhật hiển thị ngay lập tức
   toggleMonitorPanel(config.motor.show_hardlimit_monitor);
   
-  let countdown = 3;
+  let countdown = 5;
   const msgEl = document.querySelector('#save-message');
   if(msgEl) {
     msgEl.style.display = 'block';
@@ -1271,7 +1283,7 @@ function performCalibrationCheck(callback) {
             setRebootingStatus();
             
             // Hiển thị đếm ngược Reboot giống nút Save All
-            let countdown = 3;
+            let countdown = 5;
             const msgEl = document.querySelector('#save-message');
             if(msgEl) {
               msgEl.style.display = 'block';
@@ -1989,6 +2001,7 @@ function showMessage(msg, elementId, duration = 2000) {
 }
 
 function setRebootingStatus() {
+  isRebooting = true;
   const statusEl = document.getElementById('system-status');
   if (statusEl) {
     statusEl.textContent = "REBOOTING";

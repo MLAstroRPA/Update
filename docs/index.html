@@ -14,8 +14,8 @@
         <h1 class="brand-title">MLAstro RPA</h1>
         <p class="brand-subtitle">Robotic Polar Alignment</p>
         <div class="version-info">
-          <span id="display-fw-ver">Firmware 1.2.57</span>
-          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.57</span>
+          <span id="display-fw-ver">Firmware 1.2.58</span>
+          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.58</span>
         </div>
       </div>
       <div class="header-tools">
@@ -666,11 +666,11 @@
               </div>
               <div class="config-item">
                 <label>AP IP Address:</label>
-                <input type="text" id="ap-ip" placeholder="1.2.57.1">
+                <input type="text" id="ap-ip" placeholder="1.2.58.1">
               </div>
               <div class="config-item">
                 <label>Subnet Mask:</label>
-                <input type="text" id="ap-subnet" placeholder="1.2.57.0">
+                <input type="text" id="ap-subnet" placeholder="1.2.58.0">
               </div>
             </div>
             
@@ -712,6 +712,12 @@
           <h2>🔑 Admin Config</h2><span class="toggle-icon">▼</span>
         </div> 
         <div class="panel-content">
+          <div class="config-item" style="margin-top: 15px;">
+            <label for="swap-az-alt" class="checkbox-label">
+              <input type="checkbox" id="swap-az-alt" class="checkbox-input">
+              Swap Az-Alt motor ports (requires reboot)
+            </label>
+          </div>
           <div class="config-item" style="margin-top: 15px;">
             <label for="show-hardlimit-monitor" class="checkbox-label">
               <input type="checkbox" id="show-hardlimit-monitor" class="checkbox-input">

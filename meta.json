@@ -411,5 +411,19 @@
     "version": "1.2.57",
     "size_bytes": 1507328,
     "release_date_utc": "2026-08-17T05:52:05Z"
+  },
+  "firmware 1.2.58.bin": {
+    "description": "Added — Swap Az-Alt Motor Ports",
+    "type": "firmware",
+    "version": "1.2.58",
+    "size_bytes": 1220576,
+    "release_date_utc": "2026-08-17T09:36:29Z"
+  },
+  "spiffs 1.2.58.bin": {
+    "description": "Added — Swap Az-Alt Motor Ports",
+    "type": "spiffs",
+    "version": "1.2.58",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-17T09:36:29Z"
   }
 }
