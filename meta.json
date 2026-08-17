@@ -285,5 +285,131 @@
     "version": "1.2.48",
     "size_bytes": 1507328,
     "release_date_utc": "2026-08-15T02:52:36Z"
+  },
+  "firmware 1.2.49.bin": {
+    "description": "Fix: sửa SoftcoolStep xử lý cú giật khi tăng tốc",
+    "type": "firmware",
+    "version": "1.2.49",
+    "size_bytes": 1214880,
+    "release_date_utc": "2026-08-15T03:28:51Z"
+  },
+  "spiffs 1.2.49.bin": {
+    "description": "Fix: sửa SoftcoolStep xử lý cú giật khi tăng tốc",
+    "type": "spiffs",
+    "version": "1.2.49",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-15T03:28:51Z"
+  },
+  "firmware 1.2.50.bin": {
+    "description": "FIX: Cache RSSI to solve motor hicup",
+    "type": "firmware",
+    "version": "1.2.50",
+    "size_bytes": 1215264,
+    "release_date_utc": "2026-08-15T04:25:22Z"
+  },
+  "spiffs 1.2.50.bin": {
+    "description": "FIX: Cache RSSI to solve motor hicup",
+    "type": "spiffs",
+    "version": "1.2.50",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-15T04:25:22Z"
+  },
+  "firmware 1.2.51.bin": {
+    "description": "FIX: move serial begin into core0",
+    "type": "firmware",
+    "version": "1.2.51",
+    "size_bytes": 1215344,
+    "release_date_utc": "2026-08-15T04:44:15Z"
+  },
+  "spiffs 1.2.51.bin": {
+    "description": "FIX: move serial begin into core0",
+    "type": "spiffs",
+    "version": "1.2.51",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-15T04:44:15Z"
+  },
+  "firmware 1.2.52.bin": {
+    "description": "Create chebox for \"Enable communication wathcdog\"",
+    "type": "firmware",
+    "version": "1.2.52",
+    "size_bytes": 1215728,
+    "release_date_utc": "2026-08-15T05:38:11Z"
+  },
+  "spiffs 1.2.52.bin": {
+    "description": "Create chebox for \"Enable communication wathcdog\"",
+    "type": "spiffs",
+    "version": "1.2.52",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-15T05:38:11Z"
+  },
+  "firmware 1.2.53.bin": {
+    "description": "Đưa toàn bộ vòng sinh xung vào IRAM + ghi GPIO trực tiếp (bỏ digitalWrite chậm/chạy trong flash",
+    "type": "firmware",
+    "version": "1.2.53",
+    "size_bytes": 1215632,
+    "release_date_utc": "2026-08-15T06:45:26Z"
+  },
+  "spiffs 1.2.53.bin": {
+    "description": "Đưa toàn bộ vòng sinh xung vào IRAM + ghi GPIO trực tiếp (bỏ digitalWrite chậm/chạy trong flash",
+    "type": "spiffs",
+    "version": "1.2.53",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-15T06:45:26Z"
+  },
+  "firmware 1.2.54.bin": {
+    "description": "Add Serial baaurate setting",
+    "type": "firmware",
+    "version": "1.2.54",
+    "size_bytes": 1218416,
+    "release_date_utc": "2026-08-15T09:52:56Z"
+  },
+  "spiffs 1.2.54.bin": {
+    "description": "Add Serial baaurate setting",
+    "type": "spiffs",
+    "version": "1.2.54",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-15T09:52:56Z"
+  },
+  "firmware 1.2.55.bin": {
+    "description": "Create Serial logger table to review Serial data",
+    "type": "firmware",
+    "version": "1.2.55",
+    "size_bytes": 1219328,
+    "release_date_utc": "2026-08-17T03:21:47Z"
+  },
+  "spiffs 1.2.55.bin": {
+    "description": "Create Serial logger table to review Serial data",
+    "type": "spiffs",
+    "version": "1.2.55",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-17T03:21:47Z"
+  },
+  "firmware 1.2.56.bin": {
+    "description": "Fixing Serial logs",
+    "type": "firmware",
+    "version": "1.2.56",
+    "size_bytes": 1220096,
+    "release_date_utc": "2026-08-17T04:32:17Z"
+  },
+  "spiffs 1.2.56.bin": {
+    "description": "Fixing Serial logs",
+    "type": "spiffs",
+    "version": "1.2.56",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-17T04:32:17Z"
+  },
+  "firmware 1.2.57.bin": {
+    "description": "Fixed: Serial make burst, add Serial monitor and serial Setting",
+    "type": "firmware",
+    "version": "1.2.57",
+    "size_bytes": 1219968,
+    "release_date_utc": "2026-08-17T05:52:05Z"
+  },
+  "spiffs 1.2.57.bin": {
+    "description": "Fixed: Serial make burst, add Serial monitor and serial Setting",
+    "type": "spiffs",
+    "version": "1.2.57",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-17T05:52:05Z"
   }
 }

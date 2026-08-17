@@ -264,7 +264,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: pointer;
+  cursor: default;
   margin-bottom: 15px;
   user-select: none;
 }
@@ -280,6 +280,15 @@ body {
   color: var(--gray);
   transition: transform 0.3s ease;
   margin-left: 10px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  flex: 0 0 auto;
+}
+
+.toggle-icon:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .panel.collapsed .toggle-icon {
@@ -715,6 +724,30 @@ body {
 .log-warning { color: darkorange; }
 .log-success { color: green; }
 .log-backlash { color: orange; font-weight: bold; }
+
+/* Serial log TX/RX */
+.serial-log-rx { color: #4fc3f7; }
+.serial-log-tx { color: #a5d6a7; }
+.hide-rx .serial-log-rx { display: none; }
+.hide-tx .serial-log-tx { display: none; }
+
+/* Khóa UI khi PC (Serial) đang điều khiển */
+body.system-locked .btn,
+body.system-locked .speed-btn,
+body.system-locked .arrow-btn,
+body.system-locked .step-btn,
+body.system-locked .switch {
+  pointer-events: none;
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Ngoại lệ: cho phép dùng nút trong bảng log khi Serial master đang handshake (theo dõi monitor/log) */
+body.system-locked .log-btn {
+  pointer-events: auto;
+  opacity: 1;
+  cursor: pointer;
+}
 
 .history-empty {
   text-align: center;
@@ -1243,6 +1276,14 @@ input, textarea {
 .wifi-scanning { padding: 20px; text-align: center; color: var(--text-muted); font-style: italic; }
 /* Cho phép chọn text trong log để copy */
 #system-log, #system-log * {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* Cho phép chọn text trong bảng Serial log để copy */
+#serial-log, #serial-log * {
   -webkit-user-select: text;
   -moz-user-select: text;
   -ms-user-select: text;

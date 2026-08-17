@@ -14,8 +14,8 @@
         <h1 class="brand-title">MLAstro RPA</h1>
         <p class="brand-subtitle">Robotic Polar Alignment</p>
         <div class="version-info">
-          <span id="display-fw-ver">Firmware 1.2.48</span>
-          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.48</span>
+          <span id="display-fw-ver">Firmware 1.2.57</span>
+          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.57</span>
         </div>
       </div>
       <div class="header-tools">
@@ -259,6 +259,29 @@
         </div>
       </section>
 
+      <!-- Serial Log -->
+      <section class="panel log-panel" id="serial-log-panel" style="display:none;">
+        <div class="panel-header log-header">
+          <div class="log-header-title">
+            <h2>🔀 Serial Log (TX/RX)</h2><span class="toggle-icon">▼</span>
+          </div>
+          <div class="log-actions">
+            <label class="checkbox-label" style="display:inline-flex; align-items:center; gap:4px; margin-right:6px;">
+              <input type="checkbox" id="show-serial-rx" class="checkbox-input" checked> Show RX
+            </label>
+            <label class="checkbox-label" style="display:inline-flex; align-items:center; gap:4px; margin-right:6px;">
+              <input type="checkbox" id="show-serial-tx" class="checkbox-input" checked> Show TX
+            </label>
+            <button id="clear-serial-log-btn" class="btn btn-danger log-btn">🗑️ Clear</button>
+          </div>
+        </div>
+        <div class="panel-content">
+          <div class="history-list" id="serial-log">
+            <div class="history-empty">Waiting for serial data...</div>
+          </div>
+        </div>
+      </section>
+
     </div>
 
     <!-- CONFIG TAB -->
@@ -328,6 +351,67 @@
             <label for="enable-hardlimit" class="checkbox-label">
               <input type="checkbox" id="enable-hardlimit" class="checkbox-input">
               Enable Hard Limit (STALLGUARD Detection)
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Serial Setting -->
+      <section class="panel serial-panel" id="panel-serial">
+        <div class="panel-header">
+          <h2>🔌 Serial Setting</h2><span class="toggle-icon">▼</span>
+        </div>
+        <div class="panel-content">
+          <div class="config-grid" style="grid-template-columns: repeat(2, 1fr);">
+            <div class="config-item">
+              <label>Baud Rate:</label>
+              <select id="serial-baud" class="input-field">
+                <option value="9600">9600</option>
+                <option value="19200">19200</option>
+                <option value="38400">38400</option>
+                <option value="57600">57600</option>
+                <option value="115200" selected>115200</option>
+                <option value="230400">230400</option>
+                <option value="460800">460800</option>
+                <option value="921600">921600</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label>Data Bits:</label>
+              <select id="serial-databits" class="input-field">
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8" selected>8</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label>Stop Bits:</label>
+              <select id="serial-stopbits" class="input-field">
+                <option value="1" selected>1</option>
+                <option value="1.5">1.5</option>
+                <option value="2">2</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label>Parity:</label>
+              <select id="serial-parity" class="input-field">
+                <option value="0" selected>None</option>
+                <option value="1">Even</option>
+                <option value="2">Odd</option>
+              </select>
+            </div>
+          </div>
+          <div class="config-item" style="margin-top: 15px;">
+            <label for="enable-comm-watchdog" class="checkbox-label">
+              <input type="checkbox" id="enable-comm-watchdog" class="checkbox-input" checked>
+              Enable Communication Watchdog (ESTOP on lost heartbeat)
+            </label>
+          </div>
+          <div class="config-item" style="margin-top: 10px;">
+            <label for="toggle-serial-log-btn" class="checkbox-label">
+              <input type="checkbox" id="toggle-serial-log-btn" class="checkbox-input">
+              Show Serial logs
             </label>
           </div>
         </div>
@@ -582,11 +666,11 @@
               </div>
               <div class="config-item">
                 <label>AP IP Address:</label>
-                <input type="text" id="ap-ip" placeholder="1.2.48.1">
+                <input type="text" id="ap-ip" placeholder="1.2.57.1">
               </div>
               <div class="config-item">
                 <label>Subnet Mask:</label>
-                <input type="text" id="ap-subnet" placeholder="1.2.48.0">
+                <input type="text" id="ap-subnet" placeholder="1.2.57.0">
               </div>
             </div>
             

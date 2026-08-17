@@ -11,6 +11,7 @@ let isCalibAutoCenterPending = false; // Biến cờ theo dõi quy trình Auto C
 let isUpdatingFromWS = false; // Cờ chặn gửi lệnh lưu khi đang cập nhật từ Server
 let backendWsConnected = false;
 let backendWsChecked = false;
+let systemLocked = false; // true = đang do PC (Serial) điều khiển -> khóa nút điều khiển web
 
 // Chart Variables
 let sgChartCtx = null;
@@ -857,6 +858,27 @@ function updateUI(data) {
         toggleMonitorPanel(data.motor.show_hardlimit_monitor);
       }
     }
+    if (data.serial !== undefined) {
+      const sMap = { baud: 'serial-baud', databits: 'serial-databits', stopbits: 'serial-stopbits', parity: 'serial-parity' };
+      for (const k in sMap) {
+        if (data.serial[k] !== undefined) {
+          const el = document.getElementById(sMap[k]);
+          if (el) el.value = String(data.serial[k]);
+        }
+      }
+      if (data.serial.watchdog !== undefined) {
+        const cw = document.getElementById('enable-comm-watchdog');
+        if (cw) cw.checked = data.serial.watchdog;
+      }
+      if (data.serial.log !== undefined) {
+        const sl = document.getElementById('toggle-serial-log-btn');
+        if (sl) {
+          sl.checked = data.serial.log;
+          const panel = document.getElementById('serial-log-panel');
+          if (panel) panel.style.display = data.serial.log ? 'block' : 'none';
+        }
+      }
+    }
     isUpdatingFromWS = false;
   }
 
@@ -972,6 +994,16 @@ function updateUI(data) {
   // Xử lý log từ server
   if (data.log !== undefined) {
     appendLog(data.log);
+  }
+
+  // Xử lý trạng thái khóa (PC Serial đang điều khiển)
+  if (data.serial_locked !== undefined) {
+    applySystemLock(!!data.serial_locked);
+  }
+
+  // Xử lý log Serial TX/RX
+  if (data.serial_log !== undefined) {
+    appendSerialLog(data.serial_log.dir, data.serial_log.msg);
   }
 
   // Cập nhật danh sách client
@@ -1130,6 +1162,14 @@ function collectConfig() {
       escape_rotations: parseInt(document.getElementById('escape-rotations').value),
       enable_hardlimit: document.getElementById('enable-hardlimit').checked,
       show_hardlimit_monitor: document.getElementById('show-hardlimit-monitor').checked
+    },
+    serial: {
+      baud: parseInt(document.getElementById('serial-baud').value) || 115200,
+      databits: parseInt(document.getElementById('serial-databits').value) || 8,
+      stopbits: parseFloat(document.getElementById('serial-stopbits').value) || 1,
+      parity: parseInt(document.getElementById('serial-parity').value) || 0,
+      watchdog: document.getElementById('enable-comm-watchdog') ? document.getElementById('enable-comm-watchdog').checked : true,
+      log: document.getElementById('toggle-serial-log-btn') ? document.getElementById('toggle-serial-log-btn').checked : false
     },
     backlash: {
       enable: document.getElementById('enable-backlash').checked,
@@ -1781,6 +1821,22 @@ function appendLog(message) {
   }
 }
 
+// ===== SERIAL LOG =====
+function appendSerialLog(dir, message) {
+  const now = new Date();
+  const time = now.toLocaleTimeString();
+  const entry = document.createElement('div');
+  entry.className = 'history-entry';
+  entry.classList.add(dir === 'RX' ? 'serial-log-rx' : 'serial-log-tx');
+  const safe = String(message).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  entry.textContent = `[${time}] ${dir === 'RX' ? '⬇ RX' : '⬆ TX'} ${safe}`;
+  const container = document.getElementById('serial-log');
+  if (!container) return;
+  if (container.querySelector('.history-empty')) container.innerHTML = '';
+  container.insertBefore(entry, container.firstChild);
+  while (container.children.length > 200) container.removeChild(container.lastChild);
+}
+
 const resetErrorBtn = document.getElementById('reset-error-btn');
 if(resetErrorBtn) resetErrorBtn.addEventListener('click', () => {
   sendCommand('resetError', {});
@@ -1791,6 +1847,36 @@ if(clearLogBtn) clearLogBtn.addEventListener('click', () => {
   const logContainer = document.getElementById('system-log');
   if(logContainer) logContainer.innerHTML = '<div class="history-empty">Waiting for logs...</div>';
 });
+
+const toggleSerialLogBtn = document.getElementById('toggle-serial-log-btn');
+if (toggleSerialLogBtn) toggleSerialLogBtn.addEventListener('change', () => {
+  const panel = document.getElementById('serial-log-panel');
+  const isChecked = toggleSerialLogBtn.checked;
+  if (panel) panel.style.display = isChecked ? 'block' : 'none';
+  // Gửi xuống backend để bật/tắt việc gửi gói tin Serial log qua WebSocket + lưu FRAM
+  sendCommand('setSerialLog', { enabled: isChecked });
+});
+
+const clearSerialLogBtn = document.getElementById('clear-serial-log-btn');
+if (clearSerialLogBtn) clearSerialLogBtn.addEventListener('click', () => {
+  const container = document.getElementById('serial-log');
+  if (container) container.innerHTML = '<div class="history-empty">Waiting for serial data...</div>';
+});
+
+// Lọc hiển thị RX/TX
+function applySerialLogFilters() {
+  const container = document.getElementById('serial-log');
+  if (!container) return;
+  const showRx = document.getElementById('show-serial-rx');
+  const showTx = document.getElementById('show-serial-tx');
+  container.classList.toggle('hide-rx', showRx ? !showRx.checked : false);
+  container.classList.toggle('hide-tx', showTx ? !showTx.checked : false);
+}
+
+const showSerialRxCb = document.getElementById('show-serial-rx');
+if (showSerialRxCb) showSerialRxCb.addEventListener('change', applySerialLogFilters);
+const showSerialTxCb = document.getElementById('show-serial-tx');
+if (showSerialTxCb) showSerialTxCb.addEventListener('change', applySerialLogFilters);
 
 const clearHistoryBtn = document.getElementById('clear-history-btn');
 if(clearHistoryBtn) clearHistoryBtn.addEventListener('click', () => {
@@ -1844,6 +1930,10 @@ if(exportLogBtn) exportLogBtn.addEventListener('click', () => {
 
 // ===== UTILITY FUNCTIONS =====
 function sendCommand(cmd, data) {
+  if (systemLocked && cmd !== 'scanWifi' && cmd !== 'setSerialLog' && cmd !== 'resetError') {
+    appendLog('ERROR: System is locked by PC (Serial Control is Active).');
+    return;
+  }
   if (!ws || ws.readyState !== WebSocket.OPEN) {
     console.error('WebSocket not connected');
     return;
@@ -1855,6 +1945,18 @@ function sendCommand(cmd, data) {
   };
   
   ws.send(JSON.stringify(message));
+}
+
+// ===== SYSTEM LOCK (PC Serial đang điều khiển) =====
+function applySystemLock(locked) {
+  if (systemLocked === locked) return;
+  systemLocked = locked;
+  document.body.classList.toggle('system-locked', locked);
+  if (locked) {
+    appendLog('ERROR: System is locked by PC (Serial Control is Active).');
+  } else {
+    appendLog('System unlocked. Web control available.');
+  }
 }
 
 // Ép hàm Tuning thành biến toàn cục (Window object) để chống lỗi ReferenceError
@@ -3063,8 +3165,8 @@ function initCollapsibles() {
     }
 
     header.addEventListener('click', (e) => {
-      // Prevent collapse when clicking buttons inside header (like in Log panel)
-      if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+      // Chỉ ẩn/hiện panel khi click vào khu vực mũi tên (.toggle-icon)
+      if (!e.target.closest('.toggle-icon')) return;
       
       panel.classList.toggle('collapsed');
       

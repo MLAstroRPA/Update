@@ -4,6 +4,56 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 
 ---
 
+## [1.2.57] - 2026-08-17
+
+### 🔒 Changed — Explicit Handshake Ownership (Serial vs Web)
+
+Control handshake is now explicitly owned by a single master and is **no longer auto-transferred** when the current master disconnects.
+
+| Before | After |
+|---|---|
+| Serial disconnect → `serialHasControl=false` → Web auto-unlocked | Serial disconnect → handshake becomes **free**; Web stays locked until a **new** connection handshakes |
+| Web control implied by `!serialHasControl` | New `webHasControl` flag marks the Web master explicitly |
+
+- Handshake is granted **only** on a new connection (`WS_EVT_CONNECT` or Serial `[MLAstroRPA-TC]`) and only when the handshake is free.
+- Web master disconnect releases the handshake and stops motors. A read-only client disconnect no longer stops motors or affects the Serial session.
+
+**Files:** `src/main.cpp`, `src/Web/WebControl.cpp`, `src/Serial/SerialControl.cpp`, `src/Serial/SerialControl.h`
+
+### 👁️ Added — Read-Only Web Access During Serial Control
+
+When the PC (Serial) holds control, the web UI can still connect and view realtime values instead of being rejected.
+
+- All control buttons are locked (dimmed).
+- A red `ERROR: System is locked by PC (Serial Control is Active).` line is written to System Log instead of showing the connection-rejected modal.
+- The `connectionRejected` modal now only appears when a second web client attempts to connect.
+
+**Files:** `src/Web/WebControl.cpp`, `src/main.cpp`, `data/script.js`, `data/style.css`
+
+### 📻 Added — Serial Log (TX/RX) Panel
+
+- New **Serial Log (TX/RX)** panel showing received (`RX`) and transmitted (`TX`) serial lines, with `Show RX` / `Show TX` filters and a Clear button.
+- **Show Serial logs** checkbox: persisted to FRAM (marker `0xA9`). Serial log packets are forwarded over WebSocket **only when enabled**, to avoid flooding WebSocket telemetry. A new `setSerialLog` command toggles and saves the setting.
+- Fixed `TX null` entries: the `serial_log` JSON document was 512 B, smaller than the full idle telemetry (~600 B); increased to 800 B.
+
+**Files:** `src/main.cpp`, `src/Serial/SerialControl.cpp`, `src/Serial/SerialControl.h`, `src/FRAM/ConfigManager.h`, `src/Web/WebControl.cpp`, `data/index.html`, `data/script.js`, `data/style.css`
+
+### 🆗 Added — Serial Command Replies Logged to Web
+
+All Serial `ok` / `error: ...` replies are now logged as TX in the web Serial Log via a new `serialReply()` helper (align, jog, home, speed, settings, WiFi/AP, etc.). Previously only telemetry TX was logged, so command acknowledgements were invisible in the web UI.
+
+**Files:** `src/Serial/SerialControl.cpp`
+
+### 🧰 Changed — UI & Log Panel Usability
+
+- Panel collapse now toggles **only** via the arrow (chevron) area, not the whole header row.
+- Serial log text is selectable for copy/paste.
+- Log & monitor panel buttons (Clear, Export CSV, Reset Error, Show RX/TX) remain usable while the Serial master is active.
+
+**Files:** `data/script.js`, `data/style.css`
+
+---
+
 ## [1.2.43] - 2026-07-07
 
 ### 🔒 Changed — Single-Session Connection Control
