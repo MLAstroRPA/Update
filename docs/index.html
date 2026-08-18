@@ -14,8 +14,8 @@
         <h1 class="brand-title">MLAstro RPA</h1>
         <p class="brand-subtitle">Robotic Polar Alignment</p>
         <div class="version-info">
-          <span id="display-fw-ver">Firmware 1.2.58</span>
-          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.58</span>
+          <span id="display-fw-ver">Firmware 1.2.59</span>
+          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.59</span>
         </div>
       </div>
       <div class="header-tools">
@@ -356,67 +356,6 @@
         </div>
       </section>
 
-      <!-- Serial Setting -->
-      <section class="panel serial-panel" id="panel-serial">
-        <div class="panel-header">
-          <h2>🔌 Serial Setting</h2><span class="toggle-icon">▼</span>
-        </div>
-        <div class="panel-content">
-          <div class="config-grid" style="grid-template-columns: repeat(2, 1fr);">
-            <div class="config-item">
-              <label>Baud Rate:</label>
-              <select id="serial-baud" class="input-field">
-                <option value="9600">9600</option>
-                <option value="19200">19200</option>
-                <option value="38400">38400</option>
-                <option value="57600">57600</option>
-                <option value="115200" selected>115200</option>
-                <option value="230400">230400</option>
-                <option value="460800">460800</option>
-                <option value="921600">921600</option>
-              </select>
-            </div>
-            <div class="config-item">
-              <label>Data Bits:</label>
-              <select id="serial-databits" class="input-field">
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8" selected>8</option>
-              </select>
-            </div>
-            <div class="config-item">
-              <label>Stop Bits:</label>
-              <select id="serial-stopbits" class="input-field">
-                <option value="1" selected>1</option>
-                <option value="1.5">1.5</option>
-                <option value="2">2</option>
-              </select>
-            </div>
-            <div class="config-item">
-              <label>Parity:</label>
-              <select id="serial-parity" class="input-field">
-                <option value="0" selected>None</option>
-                <option value="1">Even</option>
-                <option value="2">Odd</option>
-              </select>
-            </div>
-          </div>
-          <div class="config-item" style="margin-top: 15px;">
-            <label for="enable-comm-watchdog" class="checkbox-label">
-              <input type="checkbox" id="enable-comm-watchdog" class="checkbox-input" checked>
-              Enable Communication Watchdog (ESTOP on lost heartbeat)
-            </label>
-          </div>
-          <div class="config-item" style="margin-top: 10px;">
-            <label for="toggle-serial-log-btn" class="checkbox-label">
-              <input type="checkbox" id="toggle-serial-log-btn" class="checkbox-input">
-              Show Serial logs
-            </label>
-          </div>
-        </div>
-      </section>
-
       <!-- Soft Limits -->
       <section class="panel limits-panel" id="panel-limits">
         <div class="panel-header">
@@ -606,39 +545,55 @@
       <!-- Backlash Configuration -->
       <section class="panel backlash-panel" id="panel-backlash">
         <div class="panel-header">
-          <h2>↔️ Lead Screw Backlash</h2><span class="toggle-icon">▼</span>
+          <h2>↔️ Backlash & P.A Overshoot</h2><span class="toggle-icon">▼</span>
         </div>
         <div class="panel-content">
           <div class="config-item" style="margin-bottom: 15px;">
             <label for="enable-backlash" class="checkbox-label">
               <input type="checkbox" id="enable-backlash" class="checkbox-input">
-              Enable Anti Backlash
+              Enable Anti Backlash on firmware
             </label>
+          </div>
+          <div style="margin-left: 24px;">
+            <div class="config-grid">
+              <div class="config-item">
+                <label>AZ Backlash:</label>
+                <div class="input-wrapper"><input type="number" id="backlash-az" value="100">
+                <span class="unit">steps</span></div>
+              </div>
+              <div class="config-item">
+                <label>ALT Backlash:</label>
+                <div class="input-wrapper"><input type="number" id="backlash-alt" value="80">
+                <span class="unit">steps</span></div>
+              </div>
+            </div>
           </div>
           <div class="config-item" style="margin-bottom: 15px;">
             <label for="enable-overshoot" class="checkbox-label">
               <input type="checkbox" id="enable-overshoot" class="checkbox-input">
-              Enable Overshoot Routine
+              Enable Alt P.A Overshoot on firmware
             </label>
           </div>
-          <div class="config-item" style="margin-bottom: 15px;">
-            <label>Overshoot Amount:</label>
-            <div class="dms-row">
-              <input type="number" id="overshoot-deg" class="input-field dms-field" placeholder="Deg" min="0" max="10" step="1" value="0">°
-              <input type="number" id="overshoot-min" class="input-field dms-field" placeholder="Min" min="0" max="59" step="1" value="0">'
-              <input type="number" id="overshoot-sec" class="input-field dms-field" placeholder="Sec" min="0" max="59" step="1" value="0">"
+          <div style="margin-left: 24px;">
+            <div class="config-item" style="margin-bottom: 15px;">
+              <label for="overshoot-up" class="checkbox-label">
+                <input type="checkbox" id="overshoot-up" class="checkbox-input">
+                Move up overshoot
+              </label>
             </div>
-          </div>
-          <div class="config-grid">
-            <div class="config-item">
-              <label>AZ Backlash:</label>
-              <div class="input-wrapper"><input type="number" id="backlash-az" value="100">
-              <span class="unit">steps</span></div>
+            <div class="config-item" style="margin-bottom: 15px;">
+              <label for="overshoot-down" class="checkbox-label">
+                <input type="checkbox" id="overshoot-down" class="checkbox-input">
+                Move down overshoot
+              </label>
             </div>
-            <div class="config-item">
-              <label>ALT Backlash:</label>
-              <div class="input-wrapper"><input type="number" id="backlash-alt" value="80">
-              <span class="unit">steps</span></div>
+            <div class="config-item" style="margin-bottom: 15px;">
+              <label>Overshoot Amount:</label>
+              <div class="dms-row">
+                <input type="number" id="overshoot-deg" class="input-field dms-field" placeholder="Deg" min="0" max="10" step="1" value="0">°
+                <input type="number" id="overshoot-min" class="input-field dms-field" placeholder="Min" min="0" max="59" step="1" value="0">'
+                <input type="number" id="overshoot-sec" class="input-field dms-field" placeholder="Sec" min="0" max="59" step="1" value="0">"
+              </div>
             </div>
           </div>
         </div>
@@ -666,11 +621,11 @@
               </div>
               <div class="config-item">
                 <label>AP IP Address:</label>
-                <input type="text" id="ap-ip" placeholder="1.2.58.1">
+                <input type="text" id="ap-ip" placeholder="1.2.59.1">
               </div>
               <div class="config-item">
                 <label>Subnet Mask:</label>
-                <input type="text" id="ap-subnet" placeholder="1.2.58.0">
+                <input type="text" id="ap-subnet" placeholder="1.2.59.0">
               </div>
             </div>
             
@@ -712,6 +667,62 @@
           <h2>🔑 Admin Config</h2><span class="toggle-icon">▼</span>
         </div> 
         <div class="panel-content">
+          <!-- Serial Setting (moved into Admin Config) -->
+          <div class="subsection" style="margin-bottom: 15px;">
+            <h3>🔌 Serial Setting</h3>
+            <div class="config-grid" style="grid-template-columns: repeat(2, 1fr);">
+              <div class="config-item">
+                <label>Baud Rate:</label>
+                <select id="serial-baud" class="input-field">
+                  <option value="9600">9600</option>
+                  <option value="19200">19200</option>
+                  <option value="38400">38400</option>
+                  <option value="57600">57600</option>
+                  <option value="115200" selected>115200</option>
+                  <option value="230400">230400</option>
+                  <option value="460800">460800</option>
+                  <option value="921600">921600</option>
+                </select>
+              </div>
+              <div class="config-item">
+                <label>Data Bits:</label>
+                <select id="serial-databits" class="input-field">
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8" selected>8</option>
+                </select>
+              </div>
+              <div class="config-item">
+                <label>Stop Bits:</label>
+                <select id="serial-stopbits" class="input-field">
+                  <option value="1" selected>1</option>
+                  <option value="1.5">1.5</option>
+                  <option value="2">2</option>
+                </select>
+              </div>
+              <div class="config-item">
+                <label>Parity:</label>
+                <select id="serial-parity" class="input-field">
+                  <option value="0" selected>None</option>
+                  <option value="1">Even</option>
+                  <option value="2">Odd</option>
+                </select>
+              </div>
+            </div>
+            <div class="config-item" style="margin-top: 15px;">
+              <label for="enable-comm-watchdog" class="checkbox-label">
+                <input type="checkbox" id="enable-comm-watchdog" class="checkbox-input" checked>
+                Enable Communication Watchdog (ESTOP on lost heartbeat)
+              </label>
+            </div>
+            <div class="config-item" style="margin-top: 10px;">
+              <label for="toggle-serial-log-btn" class="checkbox-label">
+                <input type="checkbox" id="toggle-serial-log-btn" class="checkbox-input">
+                Show Serial logs
+              </label>
+            </div>
+          </div>
           <div class="config-item" style="margin-top: 15px;">
             <label for="swap-az-alt" class="checkbox-label">
               <input type="checkbox" id="swap-az-alt" class="checkbox-input">

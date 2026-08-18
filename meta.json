@@ -425,5 +425,19 @@
     "version": "1.2.58",
     "size_bytes": 1507328,
     "release_date_utc": "2026-08-17T09:36:29Z"
+  },
+  "firmware 1.2.59.bin": {
+    "description": "add Move up/down overshoot checkbox",
+    "type": "firmware",
+    "version": "1.2.59",
+    "size_bytes": 1221152,
+    "release_date_utc": "2026-08-18T02:28:56Z"
+  },
+  "spiffs 1.2.59.bin": {
+    "description": "add Move up/down overshoot checkbox",
+    "type": "spiffs",
+    "version": "1.2.59",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-18T02:28:56Z"
   }
 }

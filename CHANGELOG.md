@@ -4,6 +4,40 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 
 ---
 
+## [1.2.59] - 2026-08-18
+
+### ➕ Added — Alt P.A Overshoot Direction Checkboxes
+
+- Two new checkboxes **Move up overshoot** and **Move down overshoot**, nested under **Enable Alt P.A Overshoot on firmware**.
+- Persisted to FRAM (marker `0xAB`); applied per-direction in the Alt-axis two-leg overshoot routine.
+- The master **Enable Alt P.A Overshoot** switch still gates both directions. **Move down overshoot** defaults ON to preserve prior behavior.
+- Serial: new `OvUp:X` / `OvDn:X` set commands and `OvUp` / `OvDn` telemetry fields.
+
+**Files:** `src/FRAM/ConfigManager.h`, `src/main.cpp`, `src/Serial/SerialControl.cpp`, `src/Web/WebControl.cpp`, `data/index.html`, `data/script.js`
+
+### ✏️ Changed — Backlash & P.A Overshoot UI
+
+- Panel renamed from **Backlash & Overshoot** to **Backlash & P.A Overshoot**.
+- Checkbox renamed to **Enable Alt P.A Overshoot on firmware**.
+- **Az/Alt backlash** inputs and the overshoot sub-options are indented under their parent checkboxes for clearer hierarchy.
+
+**Files:** `data/index.html`
+
+### 🟢 Fixed — Intermittent FRAM Save (SAVE ALL & REBOOT)
+
+- `saveConfig` now reads FRAM **once** and writes **once**, instead of ~7 separate read-modify-write operations that could race with the Core 0 save queue and lose config.
+- Save queue re-checks `configSaveInProgress` after reading, before writing, to avoid overwriting a fresh config with a stale copy.
+
+**Files:** `src/Web/WebControl.cpp`, `src/main.cpp`
+
+### ⚡ Changed — Auto-center FRAM Write Moved to Core 0
+
+- Auto-center completion no longer writes FRAM directly on Core 1; it pushes a `SaveRequest` to the Core 0 save queue.
+- `SaveRequest` extended with factory-zero fields (`factory_zero_az_steps`, `factory_zero_alt_steps`, `has_factory_zero`).
+- Removed a redundant `homed` WebSocket push on Core 1 (Core 0 already broadcasts it every 250 ms).
+
+**Files:** `src/main.cpp`
+
 ## [1.2.58] - 2026-08-17
 
 
