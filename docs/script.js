@@ -881,6 +881,10 @@ function updateUI(data) {
         const cw = document.getElementById('enable-comm-watchdog');
         if (cw) cw.checked = data.serial.watchdog;
       }
+      if (data.serial.simplify_telemetry !== undefined) {
+        const st = document.getElementById('simplify-telemetry-while-running');
+        if (st) st.checked = data.serial.simplify_telemetry;
+      }
       if (data.serial.log !== undefined) {
         const sl = document.getElementById('toggle-serial-log-btn');
         if (sl) {
@@ -1189,6 +1193,7 @@ function collectConfig() {
       stopbits: parseFloat(document.getElementById('serial-stopbits').value) || 1,
       parity: parseInt(document.getElementById('serial-parity').value) || 0,
       watchdog: document.getElementById('enable-comm-watchdog') ? document.getElementById('enable-comm-watchdog').checked : true,
+      simplify_telemetry: document.getElementById('simplify-telemetry-while-running') ? document.getElementById('simplify-telemetry-while-running').checked : true,
       log: document.getElementById('toggle-serial-log-btn') ? document.getElementById('toggle-serial-log-btn').checked : false
     },
     backlash: {

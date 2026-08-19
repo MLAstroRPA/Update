@@ -444,7 +444,7 @@
     "description": "Update WebUI: tab swicher stick with header",
     "type": "firmware",
     "version": "1.2.60",
-    "size_bytes": 1221552,
+    "size_bytes": 1221808,
     "release_date_utc": "2026-08-19T03:59:36Z"
   },
   "spiffs 1.2.60.bin": {
@@ -453,5 +453,19 @@
     "version": "1.2.60",
     "size_bytes": 1507328,
     "release_date_utc": "2026-08-19T03:59:36Z"
+  },
+  "firmware 1.2.61.bin": {
+    "description": "fix: enhance stop command handling for 2 axes running sequentially",
+    "type": "firmware",
+    "version": "1.2.61",
+    "size_bytes": 1222240,
+    "release_date_utc": "2026-08-19T11:20:09Z"
+  },
+  "spiffs 1.2.61.bin": {
+    "description": "fix: enhance stop command handling for 2 axes running sequentially",
+    "type": "spiffs",
+    "version": "1.2.61",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-19T11:20:09Z"
   }
 }

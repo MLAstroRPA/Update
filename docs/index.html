@@ -14,8 +14,8 @@
         <h1 class="brand-title">MLAstro RPA</h1>
         <p class="brand-subtitle">Robotic Polar Alignment</p>
         <div class="version-info">
-          <span id="display-fw-ver">Firmware 1.2.60</span>
-          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.60</span>
+          <span id="display-fw-ver">Firmware 1.2.61</span>
+          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.61</span>
         </div>
       </div>
       <div class="header-tools">
@@ -621,11 +621,11 @@
               </div>
               <div class="config-item">
                 <label>AP IP Address:</label>
-                <input type="text" id="ap-ip" placeholder="1.2.60.1">
+                <input type="text" id="ap-ip" placeholder="1.2.61.1">
               </div>
               <div class="config-item">
                 <label>Subnet Mask:</label>
-                <input type="text" id="ap-subnet" placeholder="1.2.60.0">
+                <input type="text" id="ap-subnet" placeholder="1.2.61.0">
               </div>
             </div>
             
@@ -714,6 +714,12 @@
               <label for="enable-comm-watchdog" class="checkbox-label">
                 <input type="checkbox" id="enable-comm-watchdog" class="checkbox-input" checked>
                 Enable Communication Watchdog (ESTOP on lost heartbeat)
+              </label>
+            </div>
+            <div class="config-item" style="margin-top: 10px;">
+              <label for="simplify-telemetry-while-running" class="checkbox-label">
+                <input type="checkbox" id="simplify-telemetry-while-running" class="checkbox-input" checked>
+                Enable Simply polling telemetry while running motor
               </label>
             </div>
             <div class="config-item" style="margin-top: 10px;">
