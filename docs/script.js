@@ -1804,7 +1804,9 @@ function appendLog(message) {
   let fullText = `[${time}] ${message}`;
   
   // Tô màu log dựa trên từ khóa
-  if (message.includes("Reset by User")) {
+  if (message.includes("[Apply]")) {
+    entry.classList.add('log-apply');
+  } else if (message.includes("Reset by User")) {
     entry.classList.add('log-reset');
   } else if (message.includes("Detecting")) {
     // Default color

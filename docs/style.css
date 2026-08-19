@@ -89,7 +89,7 @@ body {
 .header {
   background: var(--header-bg);
   color: var(--header-text);
-  padding: 20px;
+  padding: 10px 20px 0 20px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.3);
   position: sticky;
   top: 0;
@@ -181,12 +181,12 @@ body {
   cursor: help;
 }
 
-/* TAB NAVIGATION */
+/* TAB NAVIGATION (inside header) */
 .tab-navigation {
-  background: var(--bg-panel);
+  background: transparent;
   padding: 0;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 8px auto 0 auto;
   width: 100%;
   display: flex;
   border-bottom: 2px solid var(--border);
@@ -194,17 +194,17 @@ body {
 
 .tab-btn {
   flex: 1;
-  padding: 15px;
+  padding: 9px 15px;
   border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--gray);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   transition: all 0.3s;
   border-bottom: 3px solid transparent;
 }
@@ -724,6 +724,7 @@ body {
 .log-warning { color: darkorange; }
 .log-success { color: green; }
 .log-backlash { color: orange; font-weight: bold; }
+.log-apply { color: orange; font-weight: bold; }
 
 /* Serial log TX/RX */
 .serial-log-rx { color: #4fc3f7; }
@@ -854,6 +855,19 @@ body.system-locked .log-btn {
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
+  .header {
+    padding: 8px 12px 0 12px;
+  }
+
+  .tab-navigation {
+    margin-top: 6px;
+  }
+
+  .tab-btn {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
   .header-content {
     flex-direction: row;
     justify-content: space-between;
