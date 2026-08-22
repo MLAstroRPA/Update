@@ -13,6 +13,7 @@ let backendWsConnected = false;
 let backendWsChecked = false;
 let systemLocked = false; // true = đang do PC (Serial) điều khiển -> khóa nút điều khiển web
 let isRebooting = false; // giữ trạng thái REBOOTING cho đến khi reboot hoàn tất
+let motionMode = 'idle';
 
 // Chart Variables
 let sgChartCtx = null;
@@ -687,7 +688,7 @@ function updateUI(data) {
 
         // Khóa/Mở khóa các nút điều khiển dựa trên trạng thái lỗi
         hasSystemError = (data.sys_status === 'ERROR');
-        setSystemLocked(hasSystemError || isSystemCalibrating);
+        updateMotionControls();
       }
     }
   }
@@ -695,7 +696,12 @@ function updateUI(data) {
   // Cập nhật trạng thái Calib để khóa nút
   if (data.isCalibrating !== undefined) {
     isSystemCalibrating = data.isCalibrating;
-    setSystemLocked(hasSystemError || isSystemCalibrating);
+    updateMotionControls();
+  }
+
+  if (data.motion_mode !== undefined) {
+    motionMode = data.motion_mode;
+    updateMotionControls();
   }
   
   // Cập nhật thông tin phiên bản từ Server
@@ -1090,45 +1096,105 @@ function toggleMonitorPanel(show) {
   if (panel) panel.style.display = show ? 'block' : 'none';
 }
 
-// ===== SYSTEM LOCK FUNCTION =====
-function setSystemLocked(isLocked) {
-  const buttonsToLock = [
-    'btn-up', 'btn-down', 'btn-left', 'btn-right',
-    'align-btn', 'align-az-btn', 'align-alt-btn',
-    'return-home-btn', 'set-home-btn', 'reset-home-btn',
-    'save-az-btn', 'save-alt-btn'
+// ===== MOTION CONTROL LOCKS =====
+function updateMotionControls() {
+  const manualSelectors = ['#btn-up', '#btn-down', '#btn-left', '#btn-right'];
+  const automaticSelectors = [
+    '#align-btn', '#align-az-btn', '#align-alt-btn', '#return-home-btn',
+    '#calib-az-btn', '#calib-alt-btn', '#calib-all-btn',
+    'button[onclick*="startTuning"]', 'button[onclick*="startTuningTcool"]'
   ];
-  
-  buttonsToLock.forEach(id => {
-    const btn = document.getElementById(id);
-    if (btn) {
-      btn.disabled = isLocked;
-      if (isLocked) btn.classList.add('ui-locked');
-      else btn.classList.remove('ui-locked');
-    }
-  });
+  const globallyLocked = systemLocked || hasSystemError;
+  const disableManual = globallyLocked || motionMode === 'automatic';
+  const disableAutomatic = globallyLocked || motionMode !== 'idle';
+
+  const setDisabled = (selector, disabled) => {
+    document.querySelectorAll(selector).forEach((button) => {
+      button.disabled = disabled;
+      button.classList.toggle('ui-locked', disabled);
+    });
+  };
+
+  manualSelectors.forEach((selector) => setDisabled(selector, disableManual));
+  automaticSelectors.forEach((selector) => setDisabled(selector, disableAutomatic));
 }
 
 // ===== TAB SWITCHING =====
+function switchTab(tabName) {
+  const btn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+  const content = document.getElementById(tabName + '-tab');
+  if (!btn || !content) return;
+
+  // Hide all tabs
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.remove('active');
+  });
+
+  // Remove active from all buttons
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('active');
+  });
+
+  // Show selected tab and mark button as active
+  content.classList.add('active');
+  btn.classList.add('active');
+}
+
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    const tabName = btn.dataset.tab;
-    
-    // Hide all tabs
-    document.querySelectorAll('.tab-content').forEach(tab => {
-      tab.classList.remove('active');
-    });
-    
-    // Remove active from all buttons
-    document.querySelectorAll('.tab-btn').forEach(b => {
-      b.classList.remove('active');
-    });
-    
-    // Show selected tab and mark button as active
-    document.getElementById(tabName + '-tab').classList.add('active');
-    btn.classList.add('active');
+    switchTab(btn.dataset.tab);
   });
 });
+
+// ===== SWIPE LEFT/RIGHT TO SWITCH TAB (Mobile) =====
+let swipeStartX = null;
+let swipeStartY = null;
+let swipeHorizontal = false;
+
+// Các phần tử tương tác: bỏ qua nếu cú chạm bắt đầu trên chúng
+document.addEventListener('touchstart', (e) => {
+  // Chỉ xử lý khi 1 ngón tay
+  if (e.touches.length > 1) { swipeStartX = null; return; }
+  // Bỏ qua khi chạm bắt đầu trên các control (nút, input, ô cuộn, modal...)
+  const isInteractive = e.target.closest('.tab-btn, .arrow-btn, .speed-btn, .step-btn, .btn, .switch, .toggle-icon, input, textarea, select, label, .modal, .history-list, .wifi-list, .modal-body');
+  if (isInteractive) { swipeStartX = null; return; }
+  swipeStartX = e.touches[0].clientX;
+  swipeStartY = e.touches[0].clientY;
+  swipeHorizontal = false;
+}, { passive: true });
+
+document.addEventListener('touchmove', (e) => {
+  if (swipeStartX === null) return;
+  const dx = e.touches[0].clientX - swipeStartX;
+  const dy = e.touches[0].clientY - swipeStartY;
+  // Đánh dấu là vuốt ngang khi độ dịch ngang vượt trội so với dọc
+  if (Math.abs(dx) > Math.abs(dy) * 1.2 && Math.abs(dx) > 12) {
+    swipeHorizontal = true;
+  }
+}, { passive: true });
+
+document.addEventListener('touchend', (e) => {
+  if (swipeStartX === null) return;
+  const dx = e.changedTouches[0].clientX - swipeStartX;
+  const dy = e.changedTouches[0].clientY - swipeStartY;
+  swipeStartX = null;
+  swipeStartY = null;
+
+  if (!swipeHorizontal) return;
+  if (Math.abs(dx) < 60) return;                 // Vuốt quá ngắn -> bỏ qua
+  if (Math.abs(dy) > Math.abs(dx) * 1.2) return; // Thiên về dọc -> bỏ qua
+
+  const activeTab = document.querySelector('.tab-content.active');
+  if (!activeTab) return;
+
+  if (dx < 0) {
+    // Vuốt trái -> sang tab kế tiếp (CONFIG)
+    if (activeTab.id === 'control-tab') switchTab('config');
+  } else {
+    // Vuốt phải -> về tab trước (CONTROL)
+    if (activeTab.id === 'config-tab') switchTab('control');
+  }
+}, { passive: true });
 
 // ===== SPEED LEVEL SELECTION =====
 document.querySelectorAll('.speed-btn').forEach(btn => {
@@ -1981,6 +2047,7 @@ function applySystemLock(locked) {
   if (systemLocked === locked) return;
   systemLocked = locked;
   document.body.classList.toggle('system-locked', locked);
+  updateMotionControls();
   if (locked) {
     appendLog('ERROR: System is locked by PC (Serial Control is Active).');
   } else {

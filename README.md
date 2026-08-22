@@ -38,15 +38,58 @@ Official release repository for the **MLAstroRPA** Robotic Polar Alignment mount
 
 ### 1. Power & connect
 
-- Power on the mount. It either creates an Access Point or joins the saved Wi-Fi network.
-- Default Access Point settings:
-  - SSID: `MLAstro RPA`
-  - Password: `MLAstro RPA`
-  - IP: `192.168.4.1`
+Power on the mount. The device runs **two network roles at the same time**:
+
+| Role | What it does |
+|---|---|
+| **AP (Access Point / Hotspot)** | The device broadcasts its own Wi-Fi network — you can connect directly to it even with no router or internet. |
+| **STA (Station)** | The device joins a saved Wi-Fi router and becomes reachable from your LAN. |
+
+#### 1.1 Connect to the Access Point (AP)
+
+| Setting | Default value |
+|---|---|
+| **SSID** | `MLAstroRPA-XXXX` — `XXXX` = last 3 hex of the MAC, **unique per unit** (avoids name collisions when several RPA share the same network) |
+| **Password** | `MLAstroRPA` |
+| **IP** | `192.168.4.1` |
+
+Steps:
+
+1. Open the Wi-Fi list on your PC / phone.
+2. Find the network starting with `MLAstroRPA-` (e.g. `MLAstroRPA-A1B2C3`). If there are several, each RPA has a different suffix — pick the one matching your unit (see *1.3*).
+3. Join it with password `MLAstroRPA`.
+4. Open a browser and go to **http://192.168.4.1**.
+5. The page automatically connects to the WebSocket endpoint `/ws`.
+
+> 💡 The AP needs no internet — it is the quickest way to reach the Web UI in the field or at a star party.
+
+#### 1.2 Join your router (STA / Station mode)
+
+Connecting to your home/observatory Wi-Fi lets you control the mount from any device on the LAN and enables OTA updates.
+
+1. Open the Web UI (via the AP above).
+2. Go to **🛠️ CONFIG → 📶 WiFi Configuration → Station Mode**.
+3. Press **🔍 Scan** to list nearby networks.
+4. Select your router's **SSID** and enter its **Password**.
+5. Press **⚡ APPLY SETTINGS** (test now, not saved) or **✓ SAVE ALL & REBOOT** to keep it.
+6. Read the **Current STA mode IP** (e.g. `192.168.1.50`) — that is where the device is reachable on the LAN.
+
+The AP stays alive while STA connects, so you can always fall back to `http://192.168.4.1`.
+
+> ⚠️ The STA IP is assigned by the router's DHCP and may change on reboot. If you forget it, open the Web UI via the AP and read it from the **📶 WiFi Configuration** panel.
+
+#### 1.3 Which device is mine?
+
+When several mounts share one location/network, identify a unit by its **3-character MAC suffix** — the same `XXXX` appears in:
+
+- The AP **SSID**: `MLAstroRPA-XXXX`
+- The **serial number** reported over USB serial (full MAC, e.g. `A1:B2:C3:D4:E5:F6`)
+- A **label** on the unit housing (recommended: print the 3-character suffix on it)
 
 ### 2. Open the Web UI
 
-- Browse to the device IP (e.g. `http://192.168.4.1`).
+- **Via AP:** open **http://192.168.4.1**.
+- **Via LAN (STA):** open the **Current STA mode IP** shown in the WiFi Configuration panel.
 - The page automatically connects to the WebSocket endpoint `/ws`.
 
 ### 3. Basic workflow

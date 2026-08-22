@@ -458,7 +458,7 @@
     "description": "fix: enhance stop command handling for 2 axes running sequentially",
     "type": "firmware",
     "version": "1.2.61",
-    "size_bytes": 1222240,
+    "size_bytes": 1223248,
     "release_date_utc": "2026-08-19T11:20:09Z"
   },
   "spiffs 1.2.61.bin": {
@@ -467,5 +467,19 @@
     "version": "1.2.61",
     "size_bytes": 1507328,
     "release_date_utc": "2026-08-19T11:20:09Z"
+  },
+  "firmware 1.2.62.bin": {
+    "description": "fix: Default AP SSID is appended with the MAC address suffix.",
+    "type": "firmware",
+    "version": "1.2.62",
+    "size_bytes": 1223248,
+    "release_date_utc": "2026-08-22T04:25:14Z"
+  },
+  "spiffs 1.2.62.bin": {
+    "description": "fix: Default AP SSID is appended with the MAC address suffix.",
+    "type": "spiffs",
+    "version": "1.2.62",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-22T04:25:14Z"
   }
 }
