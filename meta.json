@@ -481,5 +481,19 @@
     "version": "1.2.62",
     "size_bytes": 1507328,
     "release_date_utc": "2026-08-22T04:25:14Z"
+  },
+  "firmware 1.2.63.bin": {
+    "description": "feat: add STATUS LED work same as BUZZER",
+    "type": "firmware",
+    "version": "1.2.63",
+    "size_bytes": 1223280,
+    "release_date_utc": "2026-08-25T03:08:53Z"
+  },
+  "spiffs 1.2.63.bin": {
+    "description": "feat: add STATUS LED work same as BUZZER",
+    "type": "spiffs",
+    "version": "1.2.63",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-25T03:08:53Z"
   }
 }
