@@ -2354,8 +2354,8 @@ function buildUpdateModalMarkup(catalog, options = {}) {
       </label>
       <div id="usb-upload-options" class="${forceUsb ? '' : 'hidden'}" style="display:${forceUsb ? 'grid' : 'none'}; gap:10px; padding-left:24px; border-left:2px solid var(--border);">
         <div id="usb-upload-extra-options" style="display:grid; gap:8px; ${hasExtras ? '' : 'display:none;'}">
-          ${catalog.extras.bootloader ? '<label class="checkbox-label" style="display:flex; align-items:center; gap:10px;"><input type="checkbox" id="include-bootloader"><span>Upload bootloader</span></label>' : ''}
-          ${catalog.extras.partitions ? '<label class="checkbox-label" style="display:flex; align-items:center; gap:10px;"><input type="checkbox" id="include-partitions"><span>Upload partitions</span></label>' : ''}
+          ${catalog.extras.bootloader ? '<label class="checkbox-label" style="display:flex; align-items:center; gap:10px;"><input type="checkbox" id="include-bootloader"><span>Upload bootloader (First time Upload have to include this)</span></label>' : ''}
+          ${catalog.extras.partitions ? '<label class="checkbox-label" style="display:flex; align-items:center; gap:10px;"><input type="checkbox" id="include-partitions"><span>Upload partitions (First time Upload have to include this)</span></label>' : ''}
         </div>
         <label class="checkbox-label" style="display:flex; align-items:center; gap:10px; width:100%;">
           <input type="checkbox" id="update-local-offline">
