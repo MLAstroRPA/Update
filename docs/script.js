@@ -2354,12 +2354,12 @@ function buildUpdateModalMarkup(catalog, options = {}) {
       </label>
       <div id="usb-upload-options" class="${forceUsb ? '' : 'hidden'}" style="display:${forceUsb ? 'grid' : 'none'}; gap:10px; padding-left:24px; border-left:2px solid var(--border);">
         <div id="usb-upload-extra-options" style="display:grid; gap:8px; ${hasExtras ? '' : 'display:none;'}">
-          ${catalog.extras.bootloader ? '<label class="checkbox-label" style="display:flex; align-items:center; gap:10px;"><input type="checkbox" id="include-bootloader"><span>bootloader.bin (First time Flash have to check this)</span></label>' : ''}
-          ${catalog.extras.partitions ? '<label class="checkbox-label" style="display:flex; align-items:center; gap:10px;"><input type="checkbox" id="include-partitions"><span>partitions.bin (First time Flash have to check this)</span></label>' : ''}
+          ${catalog.extras.bootloader ? '<label class="checkbox-label" style="display:flex; align-items:center; gap:10px;"><input type="checkbox" id="include-bootloader"><span>bootloader.bin <em>(First time Flash have to check this)</em></span></label>' : ''}
+          ${catalog.extras.partitions ? '<label class="checkbox-label" style="display:flex; align-items:center; gap:10px;"><input type="checkbox" id="include-partitions"><span>partitions.bin <em>(First time Flash have to check this)</em></span></label>' : ''}
         </div>
         <label class="checkbox-label" style="display:flex; align-items:center; gap:10px; width:100%;">
           <input type="checkbox" id="update-local-offline">
-          <span>Local update (use offline .bin files)</span>
+          <span>Local update <em>(use offline .bin files)</em></span>
         </label>
         <div id="local-update-options" class="hidden" style="display:none; gap:10px; border:1px dashed var(--border); border-radius:6px; padding:10px;">
           <input type="file" id="local-update-files" multiple accept=".bin" style="display:none;">
