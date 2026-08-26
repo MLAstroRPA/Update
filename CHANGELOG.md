@@ -4,6 +4,20 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 
 ---
 
+## [1.2.64] - 2026-08-26
+
+### 🧰 Added — Serial RESET ERROR Command (`ReER:1`)
+
+- New serial command `ReER:1` clears the driver error state and returns the system to `READY`, behaving exactly like the **Reset Error** button in the Web UI System Log.
+- Stops both motors (inside the stepper critical section), sets `hasDriverError = false`, logs `System Error Reset by User.` to the Serial Log and replies `ok`.
+- `ReER:0` is ignored (button release event), consistent with other UI-mapped commands.
+- The command is **not** gated by `error: System Locked`, so it can always recover the system from an error state.
+- Documented in `src/Serial-protocol.md` under **System & Stop Commands**.
+
+**Files:** `src/Serial/SerialControl.cpp`, `src/Serial-protocol.md`
+
+---
+
 ## [1.2.59] - 2026-08-18
 
 ### ➕ Added — Alt P.A Overshoot Direction Checkboxes

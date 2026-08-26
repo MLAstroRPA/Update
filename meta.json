@@ -495,5 +495,19 @@
     "version": "1.2.63",
     "size_bytes": 1507328,
     "release_date_utc": "2026-08-25T03:08:53Z"
+  },
+  "firmware 1.2.64.bin": {
+    "description": "feat: Add RESET ERROR over Serial cmd",
+    "type": "firmware",
+    "version": "1.2.64",
+    "size_bytes": 1223472,
+    "release_date_utc": "2026-08-26T10:17:03Z"
+  },
+  "spiffs 1.2.64.bin": {
+    "description": "feat: Add RESET ERROR over Serial cmd",
+    "type": "spiffs",
+    "version": "1.2.64",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-26T10:17:03Z"
   }
 }
