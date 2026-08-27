@@ -500,7 +500,7 @@
     "description": "feat: Add RESET ERROR over Serial cmd",
     "type": "firmware",
     "version": "1.2.64",
-    "size_bytes": 1223472,
+    "size_bytes": 1223584,
     "release_date_utc": "2026-08-26T10:17:03Z"
   },
   "spiffs 1.2.64.bin": {
@@ -509,5 +509,19 @@
     "version": "1.2.64",
     "size_bytes": 1507328,
     "release_date_utc": "2026-08-26T10:17:03Z"
+  },
+  "firmware 1.2.65.bin": {
+    "description": "Fix: add Open-Load Error, Move Hardlimit into Admin Config",
+    "type": "firmware",
+    "version": "1.2.65",
+    "size_bytes": 1225472,
+    "release_date_utc": "2026-08-27T10:52:35Z"
+  },
+  "spiffs 1.2.65.bin": {
+    "description": "Fix: add Open-Load Error, Move Hardlimit into Admin Config",
+    "type": "spiffs",
+    "version": "1.2.65",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-27T10:52:35Z"
   }
 }

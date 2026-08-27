@@ -4,12 +4,70 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 
 ---
 
+## [1.2.65] - 2026-08-27
+
+### Fixed — Alignment Values Not Updating While Running (Telemetry Cache)
+
+- The **Alignment** tab values (Az/Alt error set via `AzED`/`AzEM`/`AzES`/`AzDi`/`AlED`/`AlEM`/`AlES`/`AlDi`) were still echoing **old telemetry** after changing values and starting a new run.
+- Cause: the telemetry segment `s_segA` is only rebuilt when the motors stop; values set while idle were cached and the stale copy was re-sent during the next align.
+- Fix: a `telemetryCacheDirty` flag is set on every Az/Alt error/direction command and forces the cache to rebuild immediately — even while motors are running — then clears itself.
+
+**Files:** `src/Serial/SerialControl.cpp`
+
+### Added — Open-Load / Motor-Not-Connected Detection (StallGuard Back-EMF)
+
+- Firmware now reports an ERROR when a motor is **not connected / no back-EMF** while the axis is running (open circuit).
+- The TMC2209 **OLA/OLB** bits are **not reliable** on this hardware, so detection uses **StallGuard `SG_RESULT`** (back-EMF): when the axis is running and `SG_RESULT < 5` for **2 consecutive checks (~1 s)** → `CRITICAL: Motor not connected / no back-EMF!` → `hasDriverError` → motors stop + ERROR beep.
+- Works in **both SpreadCycle and StealthChop**.
+- New telemetry diagnostics: **`AzOL` / `AlOL`** (0=ok, 1=open A, 2=open B, 3=both, 9=driver not responding) and **`AzSG` / `AlSG`** (StallGuard value), refreshed every 1000 ms.
+
+**Files:** `src/Steper/Steper.cpp`, `src/Serial/SerialControl.cpp`, `src/Steper/Steper.h`
+
+### Changed — Driver Reads Gated to Boot + Open-Load Window (fixes false "Driver communication lost")
+
+- While a motor is **running**, `DRV_STATUS` UART reads are blocked/fail (return `0`) — this caused **false "Driver communication lost"** errors on a healthy axis.
+- Drivers are now only read:
+  1. During the **boot window** (`DRIVER_BOOT_CHECK_MS = 5000 ms`, motors idle) → 3 consecutive bad reads → `CRITICAL: Driver not connected at startup!`
+  2. Within the **open-load window** (`DRIVER_OPENLOAD_WINDOW_MS = 3000 ms` right after an axis starts running) → `SG_RESULT` used for no-motor detection; `DRV_STATUS` read failures are **ignored** while running.
+- After the window, reading stops until the axis stops — removing UART pressure during motion and eliminating the false communication-loss error.
+
+**Files:** `src/Steper/Steper.h`, `src/Steper/Steper.cpp`
+
+### Fixed — Open-Load No Longer Misreported as Hard Limit (no reverse-run)
+
+- When the motor is not connected, `SG_RESULT ≈ 0 < SGTHRS` makes the TMC2209 **DIAG pin assert** → Core 1's hard-limit protection misread it as a physical hard limit → entered **Escape mode (ran the motor in reverse)** + reported `CRITICAL: AZ/ALT Hardlimit!`.
+- **DIAG is now detected on Core 0** (`checkAndLogDriverErrors`) via direct GPIO reads (no UART, no glitch) and combined with `SG_RESULT`.
+- Shared `azOpenLoadActive` / `altOpenLoadActive` flags coordinate both cores:
+  - Core 1 sets the flag when an axis starts running (pending motor check).
+  - Core 0 sets it true when open-load is suspected, false when the motor is confirmed.
+  - When the flag is active, Core 1 **clears all hard-limit flags** (`stall_start`, `escaping`, `blocked_dir`) and **skips DIAG hard-limit detection**.
+- Net effect: an axis without a motor reports **open-load** (never a hard limit, never reverse-runs); a real hard limit with a connected motor still works normally.
+
+**Files:** `src/Steper/Steper.cpp`, `src/Steper/Steper.h`, `src/main.cpp`
+
+### Changed — Hard Limits UI Reorganized under Admin Config
+
+- The **Hard Limits (Sensorless)** panel was moved from its own top-level panel into the **Admin Config** section as a child block, placed directly under **Sensorless Auto Tuning** and above **Travel Calibration**.
+- All input IDs (`az-sg-*`, `alt-sg-*`, `az-tcool-*`, `alt-tcool-*`, `stall-time`, `escape-rotations`, `enable-hardlimit`) are unchanged, so the existing JS keeps working.
+
+**Files:** `data/index.html`
+
+---
+
 ## [1.2.64] - 2026-08-26
 
-### 🧰 Added — Serial RESET ERROR Command (`ReER:1`)
+### Fixed — 3-Beep ERROR Alert for Hardlimit & Motor Error
+
+- **Hardlimit** (StallGuard tripped) and **Motor/Driver Error** now trigger `BEEP_ERROR` (**3 beeps**, repeated every 5 s while the error persists) — previously the `triggerBeep(BEEP_ERROR)` calls were **dead code** after an unconditional `return`, so no alert sounded.
+- Buzzer/status-LED is silenced immediately (`triggerBeep(BEEP_IDLE)`) when the error is reset — both via the Web UI **Reset Error** button and the Serial `ReER:1` command.
+
+**Files:** `src/main.cpp`, `src/Web/WebControl.cpp`, `src/Serial/SerialControl.cpp`
+
+### Added — Serial RESET ERROR Command (`ReER:1`)
 
 - New serial command `ReER:1` clears the driver error state and returns the system to `READY`, behaving exactly like the **Reset Error** button in the Web UI System Log.
-- Stops both motors (inside the stepper critical section), sets `hasDriverError = false`, logs `System Error Reset by User.` to the Serial Log and replies `ok`.
+- Stops both motors (inside the stepper critical section), sets `hasDriverError = false`, and replies `ok`.
+- **No TX echo** — the Serial Log stays clean (only `ok` is replied over Serial); the message `System Error Reset by User.` is written to the **web System Log** in orange (same as the Web UI Reset Error button).
 - `ReER:0` is ignored (button release event), consistent with other UI-mapped commands.
 - The command is **not** gated by `error: System Locked`, so it can always recover the system from an error state.
 - Documented in `src/Serial-protocol.md` under **System & Stop Commands**.
@@ -20,7 +78,7 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 
 ## [1.2.59] - 2026-08-18
 
-### ➕ Added — Alt P.A Overshoot Direction Checkboxes
+### Added — Alt P.A Overshoot Direction Checkboxes
 
 - Two new checkboxes **Move up overshoot** and **Move down overshoot**, nested under **Enable Alt P.A Overshoot on firmware**.
 - Persisted to FRAM (marker `0xAB`); applied per-direction in the Alt-axis two-leg overshoot routine.
@@ -29,7 +87,7 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 
 **Files:** `src/FRAM/ConfigManager.h`, `src/main.cpp`, `src/Serial/SerialControl.cpp`, `src/Web/WebControl.cpp`, `data/index.html`, `data/script.js`
 
-### ✏️ Changed — Backlash & P.A Overshoot UI
+### Changed — Backlash & P.A Overshoot UI
 
 - Panel renamed from **Backlash & Overshoot** to **Backlash & P.A Overshoot**.
 - Checkbox renamed to **Enable Alt P.A Overshoot on firmware**.
@@ -37,7 +95,7 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 
 **Files:** `data/index.html`
 
-### 🟢 Fixed — Intermittent FRAM Save (SAVE ALL & REBOOT)
+### Fixed — Intermittent FRAM Save (SAVE ALL & REBOOT)
 
 - `saveConfig` now reads FRAM **once** and writes **once**, instead of ~7 separate read-modify-write operations that could race with the Core 0 save queue and lose config.
 - Save queue re-checks `configSaveInProgress` after reading, before writing, to avoid overwriting a fresh config with a stale copy.
@@ -55,7 +113,7 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 ## [1.2.58] - 2026-08-17
 
 
-### 🔄 Added — Swap Az-Alt Motor Ports
+### Added — Swap Az-Alt Motor Ports
 
 New **Swap Az-Alt motor ports** checkbox in Admin Config (right above "Show hardlimit monitor").
 
@@ -67,14 +125,14 @@ New **Swap Az-Alt motor ports** checkbox in Admin Config (right above "Show hard
 
 **Files:** `lib/AccelStepper/src/AccelStepper.{h,cpp}`, `src/FRAM/ConfigManager.h`, `src/Steper/Steper.{h,cpp}`, `src/main.cpp`, `src/Serial/SerialControl.cpp`, `src/Web/WebControl.cpp`, `data/index.html`, `data/script.js`
 
-### ⏱️ Changed — 5 s Non-Blocking Reboot Countdown
+### Changed — 5 s Non-Blocking Reboot Countdown
 
 - Serial `Save&Reboot` now counts down **5 s without blocking**: `networkTask` keeps processing logs, FRAM saves and telemetry while printing one dot per second, then reboots.
 - Web **SAVE ALL & REBOOT** countdown increased from 3 s to 5 s.
 
 **Files:** `src/Serial/SerialControl.cpp`, `src/Serial/SerialControl.h`, `src/main.cpp`, `data/script.js`
 
-### 🟢 Fixed — REBOOTING Status Maintained Until Reboot
+### Fixed — REBOOTING Status Maintained Until Reboot
 
 - Backend reports `sys_status = "REBOOTING"` while a reboot countdown is pending.
 - Frontend keeps the `REBOOTING` status (periodic `READY` updates no longer overwrite it) and resets on a fresh WebSocket connection.
@@ -84,7 +142,7 @@ New **Swap Az-Alt motor ports** checkbox in Admin Config (right above "Show hard
 
 ## [1.2.57] - 2026-08-17
 
-### 🔒 Changed — Explicit Handshake Ownership (Serial vs Web)
+### Changed — Explicit Handshake Ownership (Serial vs Web)
 
 Control handshake is now explicitly owned by a single master and is **no longer auto-transferred** when the current master disconnects.
 
@@ -98,7 +156,7 @@ Control handshake is now explicitly owned by a single master and is **no longer 
 
 **Files:** `src/main.cpp`, `src/Web/WebControl.cpp`, `src/Serial/SerialControl.cpp`, `src/Serial/SerialControl.h`
 
-### 👁️ Added — Read-Only Web Access During Serial Control
+### Added — Read-Only Web Access During Serial Control
 
 When the PC (Serial) holds control, the web UI can still connect and view realtime values instead of being rejected.
 
@@ -108,7 +166,7 @@ When the PC (Serial) holds control, the web UI can still connect and view realti
 
 **Files:** `src/Web/WebControl.cpp`, `src/main.cpp`, `data/script.js`, `data/style.css`
 
-### 📻 Added — Serial Log (TX/RX) Panel
+### Added — Serial Log (TX/RX) Panel
 
 - New **Serial Log (TX/RX)** panel showing received (`RX`) and transmitted (`TX`) serial lines, with `Show RX` / `Show TX` filters and a Clear button.
 - **Show Serial logs** checkbox: persisted to FRAM (marker `0xA9`). Serial log packets are forwarded over WebSocket **only when enabled**, to avoid flooding WebSocket telemetry. A new `setSerialLog` command toggles and saves the setting.
@@ -116,13 +174,13 @@ When the PC (Serial) holds control, the web UI can still connect and view realti
 
 **Files:** `src/main.cpp`, `src/Serial/SerialControl.cpp`, `src/Serial/SerialControl.h`, `src/FRAM/ConfigManager.h`, `src/Web/WebControl.cpp`, `data/index.html`, `data/script.js`, `data/style.css`
 
-### 🆗 Added — Serial Command Replies Logged to Web
+### Added — Serial Command Replies Logged to Web
 
 All Serial `ok` / `error: ...` replies are now logged as TX in the web Serial Log via a new `serialReply()` helper (align, jog, home, speed, settings, WiFi/AP, etc.). Previously only telemetry TX was logged, so command acknowledgements were invisible in the web UI.
 
 **Files:** `src/Serial/SerialControl.cpp`
 
-### 🧰 Changed — UI & Log Panel Usability
+### Changed — UI & Log Panel Usability
 
 - Panel collapse now toggles **only** via the arrow (chevron) area, not the whole header row.
 - Serial log text is selectable for copy/paste.
@@ -134,11 +192,11 @@ All Serial `ok` / `error: ...` replies are now logged as TX in the web Serial Lo
 
 ## [1.2.43] - 2026-07-07
 
-### 🔒 Changed — Single-Session Connection Control
+### Changed — Single-Session Connection Control
 
 Previously, when a new connection (WebSocket or Serial) was established, the system would forcibly take control from the existing session. This "take control" logic has been replaced with a **single-session** mechanism: only **one** control session is allowed at any time. New connections are rejected if the system is already busy.
 
-#### 🎯 Connection State Machine
+#### Connection State Machine
 
 ```mermaid
 flowchart TD
