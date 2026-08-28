@@ -4,6 +4,68 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 
 ---
 
+## [1.2.66] - 2026-08-28
+
+### Fixed — Serial Handshake Dropped When Communication Watchdog Disabled
+
+- When **Enable Communication Watchdog** was unchecked, the firmware still silently freed the Serial handshake after `SERIAL_DISCONNECT_TIMEOUT_MS` (10 s) without a `?` poll.
+- Cause: the heartbeat timestamp (`lastSerialHeartbeatQueryTime`) was refreshed **only** by `?` polls — any other received command (jog, align, config, …) did not count as activity, so an active command-only session looked "disconnected" and was dropped. After the drop, every subsequent command was answered with `error: Not connected. Send [MLAstroRPA-TC] to take control.`
+- Fix:
+  - **Any** received serial command now refreshes the heartbeat while the Serial session holds control (commands no longer look like a dead link).
+  - **Watchdog OFF now never releases the handshake**, even after long silence — the handshake is held until the device is rebooted (the user reboots if neither side can connect). The 10 s `SERIAL_DISCONNECT_TIMEOUT_MS` release path was removed (constant deleted).
+  - **Watchdog ON** still E-STOPs and releases control after `SERIAL_HEARTBEAT_TIMEOUT_MS` (1.2 s) of no traffic.
+
+**Files:** `src/main.cpp`, `src/Serial/SerialControl.cpp`, `src/Serial/SerialControl.h`
+
+### Added — Serial `Disconnect` Command (Graceful Handshake Release)
+
+- New firmware command `Disconnect\n`: stops motors smoothly and releases the Serial control handshake, returning the handshake to the **free** state without needing a reboot.
+- The NINA plugin now sends `Disconnect\n` best-effort right before the port is closed in `Disconnect()` (covers the Connect/Disconnect button and every disconnect path where the port is still open).
+- Essential when **Enable Communication Watchdog is disabled**, because the firmware then never auto-releases the handshake.
+
+**Files:** `src/Serial/SerialControl.cpp`, `Services/SerialConnectionService.cs`, `src/Serial-protocol.md`
+
+### Added — Independent Error Telemetry over Serial (`ERROR:` line)
+
+- Firmware now reports **all** error/warning codes in one dedicated telemetry line: `ERROR:Sys,AzNC,AlNC,AzOT,AlOT,AzPW,AlPW,AzSA,AzSB,AlSA,AlSB,AzOL,AlOL,AzHL,AlHL,AzSL,AlSL,Esc`.
+- Each code is `0` = OK, `1` = WARNING, `2` = ERROR; all 18 codes are always present (never truncated).
+- Sent **only when the state changes** (edge-triggered) — independent of the `?` polling — and **only while the Serial session holds control** (never when the Web controls). The line waits for free TX space so it never clips a telemetry response.
+- On a successful handshake the current error state is pushed **immediately** after `ok,firmware,SN:...` (`resetErrorTelemetrySent()`).
+- Log keyword `CRITICAL` renamed to `ERROR`.
+
+**Files:** `src/Serial/SerialControl.cpp`, `src/Serial/SerialControl.h`, `src/main.cpp`
+
+### Added — Post-Start Driver Connectivity Check + System Lock
+
+- When a jog/align command starts an axis, the driver is checked **right after the move is issued** (not before, not on the periodic scan): `DRV_STATUS` read failure → **Driver Not Responding**; over-temperature / short-to-ground → **Driver Fault**.
+- On failure the axis is stopped immediately, `hasDriverError = true` → Core 1 emergency-stops + repeats the ERROR beep/status LED, the system status becomes `ERROR`, and the ERROR telemetry (`AzNC`/`AlNC`/OT/SA/SB) is raised. Recover via **Reset Error** (`ReER:1` / Web button).
+- While locked, movement commands are answered `error: System Locked`; the Web UI shows a **WARNING** log line and disables the movement controls.
+
+**Files:** `src/Serial/SerialControl.cpp`, `src/Steper/Steper.cpp`, `src/Steper/Steper.h`, `src/Web/WebControl.cpp`, `src/main.cpp`
+
+### Changed — Main Telemetry Cleaned Up (protocol-accurate)
+
+- Removed the test diagnostic fields `AzOL`/`AlOL`/`AzSG`/`AlSG` (and their periodic `DRV_STATUS`/`SG_RESULT` reads) from the main `<...>` telemetry — they reported error-like values that were not part of the protocol.
+- Error reporting now lives exclusively in the dedicated `ERROR:` line; the main telemetry is also lighter (no periodic driver UART reads).
+
+**Files:** `src/Serial/SerialControl.cpp`
+
+### Added — Web System Log: replay, dedup and Reset cleanup
+
+- On WebSocket connect the recent system log is replayed so boot-time errors are visible after a page refresh; repeated identical messages are deduplicated; transient noise lines (client disconnect, reset notices) are filtered out.
+- **Reset Error** clears the recent-log buffer so stale errors are not replayed after a reset.
+- The "System is locked by PC (Serial Control is Active)" message is now logged as **WARNING** (orange).
+
+**Files:** `src/Web/WebControl.cpp`, `src/main.cpp`, `data/script.js`
+
+### Added — Web "Enable Communication Watchdog" quick toggle
+
+- New checkbox in the **CONTROL** tab Serial Log header (before Show RX), behaving exactly like the checkbox in Admin Config: synced 2-way and applied + persisted immediately via the new `setCommWatchdog` WebSocket command.
+
+**Files:** `data/index.html`, `data/script.js`, `src/Web/WebControl.cpp`
+
+---
+
 ## [1.2.65] - 2026-08-27
 
 ### Fixed — Alignment Values Not Updating While Running (Telemetry Cache)

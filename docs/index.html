@@ -14,8 +14,8 @@
         <h1 class="brand-title">MLAstro RPA</h1>
         <p class="brand-subtitle">Robotic Polar Alignment</p>
         <div class="version-info">
-          <span id="display-fw-ver">Firmware 1.2.65</span>
-          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.65</span>
+          <span id="display-fw-ver">Firmware 1.2.66</span>
+          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.66</span>
         </div>
       </div>
       <div class="header-tools">
@@ -266,6 +266,10 @@
             <h2>🔀 Serial Log (TX/RX)</h2><span class="toggle-icon">▼</span>
           </div>
           <div class="log-actions">
+            <label class="checkbox-label" style="display:inline-flex; align-items:center; gap:4px; margin-right:6px;"
+                   title="Automatically ESTOP + release serial control when the PC stops sending queries (heartbeat) for 1.2s. Same as the checkbox in Admin Config.">
+              <input type="checkbox" id="enable-comm-watchdog-serial" class="checkbox-input"> Enable Comm. Watchdog
+            </label>
             <label class="checkbox-label" style="display:inline-flex; align-items:center; gap:4px; margin-right:6px;">
               <input type="checkbox" id="show-serial-rx" class="checkbox-input" checked> Show RX
             </label>
@@ -553,11 +557,11 @@
               </div>
               <div class="config-item">
                 <label>AP IP Address:</label>
-                <input type="text" id="ap-ip" placeholder="1.2.65.1">
+                <input type="text" id="ap-ip" placeholder="1.2.66.1">
               </div>
               <div class="config-item">
                 <label>Subnet Mask:</label>
-                <input type="text" id="ap-subnet" placeholder="1.2.65.0">
+                <input type="text" id="ap-subnet" placeholder="1.2.66.0">
               </div>
             </div>
             

@@ -523,5 +523,19 @@
     "version": "1.2.65",
     "size_bytes": 1507328,
     "release_date_utc": "2026-08-27T10:52:35Z"
+  },
+  "firmware 1.2.66.bin": {
+    "description": "feat: report error over serial communication",
+    "type": "firmware",
+    "version": "1.2.66",
+    "size_bytes": 1229200,
+    "release_date_utc": "2026-08-28T07:45:21Z"
+  },
+  "spiffs 1.2.66.bin": {
+    "description": "feat: report error over serial communication",
+    "type": "spiffs",
+    "version": "1.2.66",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-08-28T07:45:21Z"
   }
 }

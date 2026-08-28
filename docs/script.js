@@ -886,6 +886,8 @@ function updateUI(data) {
       if (data.serial.watchdog !== undefined) {
         const cw = document.getElementById('enable-comm-watchdog');
         if (cw) cw.checked = data.serial.watchdog;
+        const cws = document.getElementById('enable-comm-watchdog-serial');
+        if (cws) cws.checked = data.serial.watchdog;
       }
       if (data.serial.simplify_telemetry !== undefined) {
         const st = document.getElementById('simplify-telemetry-while-running');
@@ -1952,6 +1954,27 @@ if (toggleSerialLogBtn) toggleSerialLogBtn.addEventListener('change', () => {
   sendCommand('setSerialLog', { enabled: isChecked });
 });
 
+// Checkbox "Enable Communication Watchdog" trong thẻ Serial log: giống checkbox trong Admin Config
+// (cùng cài đặt enableCommWatchdog), giữ đồng bộ 2 chiều với checkbox admin và áp dụng ngay lập tức.
+function syncCommWatchdogCheckboxes(srcChecked) {
+  const adminCb = document.getElementById('enable-comm-watchdog');
+  const serialCb = document.getElementById('enable-comm-watchdog-serial');
+  if (adminCb) adminCb.checked = srcChecked;
+  if (serialCb) serialCb.checked = srcChecked;
+}
+const enableCommWatchdogSerialCb = document.getElementById('enable-comm-watchdog-serial');
+if (enableCommWatchdogSerialCb) enableCommWatchdogSerialCb.addEventListener('change', () => {
+  if (isUpdatingFromWS) return;
+  syncCommWatchdogCheckboxes(enableCommWatchdogSerialCb.checked);
+  // Áp dụng + lưu FRAM ngay (không cần bấm Apply ở tab CONFIG)
+  sendCommand('setCommWatchdog', { enabled: enableCommWatchdogSerialCb.checked });
+});
+const enableCommWatchdogCb = document.getElementById('enable-comm-watchdog');
+if (enableCommWatchdogCb) enableCommWatchdogCb.addEventListener('change', () => {
+  if (isUpdatingFromWS) return;
+  syncCommWatchdogCheckboxes(enableCommWatchdogCb.checked);
+});
+
 const clearSerialLogBtn = document.getElementById('clear-serial-log-btn');
 if (clearSerialLogBtn) clearSerialLogBtn.addEventListener('click', () => {
   const container = document.getElementById('serial-log');
@@ -2025,8 +2048,8 @@ if(exportLogBtn) exportLogBtn.addEventListener('click', () => {
 
 // ===== UTILITY FUNCTIONS =====
 function sendCommand(cmd, data) {
-  if (systemLocked && cmd !== 'scanWifi' && cmd !== 'setSerialLog' && cmd !== 'resetError') {
-    appendLog('ERROR: System is locked by PC (Serial Control is Active).');
+  if (systemLocked && cmd !== 'scanWifi' && cmd !== 'setSerialLog' && cmd !== 'setCommWatchdog' && cmd !== 'resetError') {
+    appendLog('WARNING: System is locked by PC (Serial Control is Active).');
     return;
   }
   if (!ws || ws.readyState !== WebSocket.OPEN) {
@@ -2049,7 +2072,7 @@ function applySystemLock(locked) {
   document.body.classList.toggle('system-locked', locked);
   updateMotionControls();
   if (locked) {
-    appendLog('ERROR: System is locked by PC (Serial Control is Active).');
+    appendLog('WARNING: System is locked by PC (Serial Control is Active).');
   } else {
     appendLog('System unlocked. Web control available.');
   }
