@@ -14,8 +14,8 @@
         <h1 class="brand-title">MLAstro RPA</h1>
         <p class="brand-subtitle">Robotic Polar Alignment</p>
         <div class="version-info">
-          <span id="display-fw-ver">Firmware 1.2.66</span>
-          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.66</span>
+          <span id="display-fw-ver">Firmware 1.2.67</span>
+          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.67</span>
         </div>
       </div>
       <div class="header-tools">
@@ -209,20 +209,6 @@
           
           <div class="alignment-inputs">
           <div class="input-group">
-            <label>Alt Error:</label>
-            <div class="dms-row">
-              <input type="number" id="alt-deg" class="input-field dms-field" placeholder="Deg" min="0" max="360" step="1">°
-              <input type="number" id="alt-min" class="input-field dms-field" placeholder="Min" min="0" max="59" step="1">'
-              <input type="number" id="alt-sec" class="input-field dms-field" placeholder="Sec" min="0" max="59" step="1">"
-            </div>
-            <div class="toggle-wrapper toggle-wrapper-vertical" aria-label="Alt direction selector">
-              <span>Up</span>
-              <label class="switch switch-vertical"><input type="checkbox" id="alt-dir"><span class="slider"></span></label>
-              <span>Down</span>
-            </div>
-            <button class="btn btn-primary btn-sm" id="align-alt-btn">Align Alt</button>
-          </div>
-          <div class="input-group">
             <label>Az Error:</label>
             <div class="dms-row">
               <input type="number" id="az-deg" class="input-field dms-field" placeholder="Deg" min="0" max="360" step="1">°
@@ -235,6 +221,20 @@
               <span>Right</span>
             </div>
             <button class="btn btn-primary btn-sm" id="align-az-btn">Align Az</button>
+          </div>
+          <div class="input-group">
+            <label>Alt Error:</label>
+            <div class="dms-row">
+              <input type="number" id="alt-deg" class="input-field dms-field" placeholder="Deg" min="0" max="360" step="1">°
+              <input type="number" id="alt-min" class="input-field dms-field" placeholder="Min" min="0" max="59" step="1">'
+              <input type="number" id="alt-sec" class="input-field dms-field" placeholder="Sec" min="0" max="59" step="1">"
+            </div>
+            <div class="toggle-wrapper toggle-wrapper-vertical" aria-label="Alt direction selector">
+              <span>Up</span>
+              <label class="switch switch-vertical"><input type="checkbox" id="alt-dir"><span class="slider"></span></label>
+              <span>Down</span>
+            </div>
+            <button class="btn btn-primary btn-sm" id="align-alt-btn">Align Alt</button>
           </div>
           <button class="btn btn-success btn-large" id="align-btn">✓ ALIGN ALL</button>
         </div>
@@ -275,6 +275,10 @@
             </label>
             <label class="checkbox-label" style="display:inline-flex; align-items:center; gap:4px; margin-right:6px;">
               <input type="checkbox" id="show-serial-tx" class="checkbox-input" checked> Show TX
+            </label>
+            <label class="checkbox-label" style="display:inline-flex; align-items:center; gap:4px; margin-right:6px;"
+                   title="Hide polling queries ('?') and their telemetry responses ('<...>') from the Serial log display.">
+              <input type="checkbox" id="hide-polling-serial" class="checkbox-input"> Hide polling and response telemetry
             </label>
             <button id="clear-serial-log-btn" class="btn btn-danger log-btn">🗑️ Clear</button>
           </div>
@@ -557,11 +561,11 @@
               </div>
               <div class="config-item">
                 <label>AP IP Address:</label>
-                <input type="text" id="ap-ip" placeholder="1.2.66.1">
+                <input type="text" id="ap-ip" placeholder="1.2.67.1">
               </div>
               <div class="config-item">
                 <label>Subnet Mask:</label>
-                <input type="text" id="ap-subnet" placeholder="1.2.66.0">
+                <input type="text" id="ap-subnet" placeholder="1.2.67.0">
               </div>
             </div>
             

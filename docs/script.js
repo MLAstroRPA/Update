@@ -1032,6 +1032,12 @@ function updateUI(data) {
     applySystemLock(!!data.serial_locked);
   }
 
+  // Serial chiếm quyền điều khiển từ Web -> khóa Web, cần refresh để bắt tay lại
+  if (data.cmd === 'controlTakenBySerial') {
+    applySystemLock(true);
+    appendLog(data.reason || 'Serial (PC) took over control. Web is locked - refresh to re-handshake.');
+  }
+
   // Xử lý log Serial TX/RX
   if (data.serial_log !== undefined) {
     appendSerialLog(data.serial_log.dir, data.serial_log.msg);
@@ -1140,6 +1146,9 @@ function switchTab(tabName) {
   // Show selected tab and mark button as active
   content.classList.add('active');
   btn.classList.add('active');
+
+  // Reset the page scroll to the top of the newly selected tab
+  window.scrollTo(0, 0);
 }
 
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -1919,19 +1928,34 @@ function appendLog(message) {
 }
 
 // ===== SERIAL LOG =====
+function isPollingSerialMessage(msgStr) {
+  return msgStr === '?' || msgStr.startsWith('<');
+}
+
 function appendSerialLog(dir, message) {
   const now = new Date();
   const time = now.toLocaleTimeString();
+  const msgStr = String(message);
+  const isPolling = isPollingSerialMessage(msgStr);
+  const hidePoll = document.getElementById('hide-polling-serial');
+
+  // Khi bật "Hide polling...": không đưa dòng polling vào bảng để chúng không chiếm bộ đệm
+  // và không đẩy các dòng đang hiển thị đi mất.
+  if (isPolling && hidePoll && hidePoll.checked) return;
+
   const entry = document.createElement('div');
   entry.className = 'history-entry';
   entry.classList.add(dir === 'RX' ? 'serial-log-rx' : 'serial-log-tx');
-  const safe = String(message).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  // Đánh dấu dòng polling/telemetry phản hồi để checkbox "Hide polling..." có thể ẩn
+  if (isPolling) entry.classList.add('serial-log-poll');
+  const safe = msgStr.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   entry.textContent = `[${time}] ${dir === 'RX' ? '⬇ RX' : '⬆ TX'} ${safe}`;
   const container = document.getElementById('serial-log');
   if (!container) return;
   if (container.querySelector('.history-empty')) container.innerHTML = '';
   container.insertBefore(entry, container.firstChild);
-  while (container.children.length > 200) container.removeChild(container.lastChild);
+  // Giới hạn bộ đệm theo số dòng đang hiển thị (không đếm ngầm dòng ẩn/polling)
+  trimSerialLog(container);
 }
 
 const resetErrorBtn = document.getElementById('reset-error-btn');
@@ -1982,19 +2006,37 @@ if (clearSerialLogBtn) clearSerialLogBtn.addEventListener('click', () => {
 });
 
 // Lọc hiển thị RX/TX
+// Cắt bớt bảng Serial log: chỉ giữ tối đa 200 dòng ĐANG HIỂN THỊ. Các dòng bị ẩn
+// (polling/telemetry khi bật "Hide polling...") bị loại bỏ hẳn khỏi bộ đệm để không
+// đếm ngầm và không đẩy các dòng đang hiển thị đi mất.
+function trimSerialLog(container) {
+  if (!container) return;
+  const hidePoll = document.getElementById('hide-polling-serial');
+  if (hidePoll && hidePoll.checked) {
+    Array.from(container.querySelectorAll('.serial-log-poll')).forEach(el => el.remove());
+  }
+  while (container.children.length > 200) container.removeChild(container.lastChild);
+}
+
 function applySerialLogFilters() {
   const container = document.getElementById('serial-log');
   if (!container) return;
   const showRx = document.getElementById('show-serial-rx');
   const showTx = document.getElementById('show-serial-tx');
+  const hidePoll = document.getElementById('hide-polling-serial');
   container.classList.toggle('hide-rx', showRx ? !showRx.checked : false);
   container.classList.toggle('hide-tx', showTx ? !showTx.checked : false);
+  container.classList.toggle('hide-poll', hidePoll ? hidePoll.checked : false);
+  // Áp dụng ngay: loại bỏ dòng polling khỏi bộ đệm khi đang bật ẩn
+  if (hidePoll && hidePoll.checked) trimSerialLog(container);
 }
 
 const showSerialRxCb = document.getElementById('show-serial-rx');
 if (showSerialRxCb) showSerialRxCb.addEventListener('change', applySerialLogFilters);
 const showSerialTxCb = document.getElementById('show-serial-tx');
 if (showSerialTxCb) showSerialTxCb.addEventListener('change', applySerialLogFilters);
+const hidePollingSerialCb = document.getElementById('hide-polling-serial');
+if (hidePollingSerialCb) hidePollingSerialCb.addEventListener('change', applySerialLogFilters);
 
 const clearHistoryBtn = document.getElementById('clear-history-btn');
 if(clearHistoryBtn) clearHistoryBtn.addEventListener('click', () => {

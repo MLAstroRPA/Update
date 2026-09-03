@@ -731,6 +731,7 @@ body {
 .serial-log-tx { color: #a5d6a7; }
 .hide-rx .serial-log-rx { display: none; }
 .hide-tx .serial-log-tx { display: none; }
+.hide-poll .serial-log-poll { display: none; }
 
 /* Khóa UI khi PC (Serial) đang điều khiển */
 body.system-locked .btn,

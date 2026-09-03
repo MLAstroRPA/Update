@@ -528,7 +528,7 @@
     "description": "feat: report error over serial communication",
     "type": "firmware",
     "version": "1.2.66",
-    "size_bytes": 1229200,
+    "size_bytes": 1229792,
     "release_date_utc": "2026-08-28T07:45:21Z"
   },
   "spiffs 1.2.66.bin": {
@@ -537,5 +537,19 @@
     "version": "1.2.66",
     "size_bytes": 1507328,
     "release_date_utc": "2026-08-28T07:45:21Z"
+  },
+  "firmware 1.2.67.bin": {
+    "description": "Fix: Increase Open Load ERROR sensitive",
+    "type": "firmware",
+    "version": "1.2.67",
+    "size_bytes": 1229776,
+    "release_date_utc": "2026-09-03T03:07:50Z"
+  },
+  "spiffs 1.2.67.bin": {
+    "description": "Fix: Increase Open Load ERROR sensitive",
+    "type": "spiffs",
+    "version": "1.2.67",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-09-03T03:07:50Z"
   }
 }

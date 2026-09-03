@@ -6,6 +6,14 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 
 ## [1.2.66] - 2026-08-28
 
+### Changed — Serial Handshake Takes Priority Over Web
+
+- Serial now always wins the handshake. When the Web UI already holds control and Serial sends `[MLAstroRPA-TC]`, the firmware **immediately releases the Web handshake** (`webHasControl=false`, `webMasterClientId=0`), cancels Web workflows + stops motors, and notifies the Web client with `{"cmd":"controlTakenBySerial","serial_locked":true,...}` so it switches to monitor-only.
+- The Web UI only re-handshakes on **refresh** (once Serial releases the handshake). While Serial holds control, a connected (or newly connecting) Web client is locked to **read-only monitoring** — no control commands accepted.
+- Previously Serial was refused (`error: System is busy. Web client is connected.`) when Web held control.
+
+**Files:** `src/main.cpp`, `data/script.js`
+
 ### Fixed — Serial Handshake Dropped When Communication Watchdog Disabled
 
 - When **Enable Communication Watchdog** was unchecked, the firmware still silently freed the Serial handshake after `SERIAL_DISCONNECT_TIMEOUT_MS` (10 s) without a `?` poll.
@@ -55,8 +63,9 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 - On WebSocket connect the recent system log is replayed so boot-time errors are visible after a page refresh; repeated identical messages are deduplicated; transient noise lines (client disconnect, reset notices) are filtered out.
 - **Reset Error** clears the recent-log buffer so stale errors are not replayed after a reset.
 - The "System is locked by PC (Serial Control is Active)" message is now logged as **WARNING** (orange).
+- **SystemLog parity for Serial (UART) control**: the serial command path now logs the same motion start/stop events as the Web UI — `MANUAL MOVING`, `Command: Return to Home received`, `ALIGN STARTED`, `STOPPED`/`FORCED STOP` cancellation — so the Web System Log shows a consistent "started … completed" story no matter which interface started the motion.
 
-**Files:** `src/Web/WebControl.cpp`, `src/main.cpp`, `data/script.js`
+**Files:** `src/Web/WebControl.cpp`, `src/main.cpp`, `src/Serial/SerialControl.cpp`, `data/script.js`
 
 ### Added — Web "Enable Communication Watchdog" quick toggle
 
@@ -79,7 +88,8 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 ### Added — Open-Load / Motor-Not-Connected Detection (StallGuard Back-EMF)
 
 - Firmware now reports an ERROR when a motor is **not connected / no back-EMF** while the axis is running (open circuit).
-- The TMC2209 **OLA/OLB** bits are **not reliable** on this hardware, so detection uses **StallGuard `SG_RESULT`** (back-EMF): when the axis is running and `SG_RESULT < 5` for **2 consecutive checks (~1 s)** → `CRITICAL: Motor not connected / no back-EMF!` → `hasDriverError` → motors stop + ERROR beep.
+- The TMC2209 **OLA/OLB** bits are **not reliable** on this hardware, so detection uses **StallGuard `SG_RESULT`** (back-EMF): when the axis is running and `SG_RESULT < 5` for **4 consecutive checks (~2 s)**, after an 800 ms settle window, → `CRITICAL: Motor not connected / no back-EMF!` → `hasDriverError` → motors stop + ERROR beep. The longer debounce prevents false open-load from transient SG pulses while the motor drives a gearbox.
+- Open-load detection uses **only `SG_RESULT`** (back-EMF); DIAG is not used (it can assert falsely during acceleration/gearbox operation). The open-load telemetry bit (`AzOL`/`AlOL`) and ERROR/WARNING logs are only emitted **after confirmation** — never during the checking/debounce phase — so the Alarm table cannot show an error while the motor is still running.
 - Works in **both SpreadCycle and StealthChop**.
 - New telemetry diagnostics: **`AzOL` / `AlOL`** (0=ok, 1=open A, 2=open B, 3=both, 9=driver not responding) and **`AzSG` / `AlSG`** (StallGuard value), refreshed every 1000 ms.
 
@@ -90,7 +100,7 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 - While a motor is **running**, `DRV_STATUS` UART reads are blocked/fail (return `0`) — this caused **false "Driver communication lost"** errors on a healthy axis.
 - Drivers are now only read:
   1. During the **boot window** (`DRIVER_BOOT_CHECK_MS = 5000 ms`, motors idle) → 3 consecutive bad reads → `CRITICAL: Driver not connected at startup!`
-  2. Within the **open-load window** (`DRIVER_OPENLOAD_WINDOW_MS = 3000 ms` right after an axis starts running) → `SG_RESULT` used for no-motor detection; `DRV_STATUS` read failures are **ignored** while running.
+  2. Within the **open-load window** (`DRIVER_OPENLOAD_WINDOW_MS = 6000 ms` right after an axis starts running, with an 800 ms settle period) → `SG_RESULT` used for no-motor detection; `DRV_STATUS` read failures are **ignored** while running.
 - After the window, reading stops until the axis stops — removing UART pressure during motion and eliminating the false communication-loss error.
 
 **Files:** `src/Steper/Steper.h`, `src/Steper/Steper.cpp`
