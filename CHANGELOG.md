@@ -4,6 +4,35 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 
 ---
 
+## [1.2.67] - 2026-09-03
+
+### Changed — Faster & More Reliable Open-Load (Motor-Not-Connected) Detection
+
+- The driver sampling interval in `checkAndLogDriverErrors` was reduced from 500 ms to **100 ms** so a missing motor / driver fault is detected much sooner.
+- Open-load debounce reduced: confirmed after **3** consecutive low-`SG_RESULT` samples (was 4 → ~2 s). Combined with the faster sampling, detection now completes well under 1 s after the settle window.
+- The post-start settle window (`DRIVER_OPENLOAD_SETTLE_MS`, during which low SG is ignored while the axis accelerates) was shortened from 800 ms to **300 ms**.
+
+**Files:** `src/Steper/Steper.cpp`, `src/Steper/Steper.h`
+
+### Changed — Driver Error Handling (Removes False "Not Connected" / False Open-Load)
+
+- While a motor is **running**, a failed UART read (`DRV_STATUS`/`SG_RESULT` = `0`/`0xFFFFFFFF`) is **no longer** treated as "driver not responding" (bit `0x01`) — motor-current noise makes UART reads unreliable during motion, so the failed read is simply ignored. This eliminates false `AzNC`/`AlNC` errors on a healthy axis.
+- Open-load detection now keys on **clean UART reads**: only when a read succeeds (`drvOk=true`) *and* `SG_RESULT < 5` (with the `0x3FF` read-error value excluded) is a sample counted as open-load suspect. The old speed-gate was removed because it missed a detached motor running fast.
+- When UART reads fail while running (connected motor turning), the low-SG counter is **not** accumulated and the "awaiting confirmation" state that suppresses hard-limit detection is kept, so a normal motor is never misread as a hard limit (no reverse-run).
+- Boot window: **"Driver not connected at startup"** is now debounced — raised only after **3** consecutive failed reads, and logged **once** instead of repeating every sample.
+- A new run resets the failed-read counter (`badReadCount`) so stale counts from the boot window are not carried into the run.
+- `checkDriverPreflight` now **retries `DRV_STATUS` up to 3 times** (20 ms apart) before concluding "driver not responding", avoiding a false system lock (`AzNC`/`AlNC`) from a single transient UART failure.
+
+**Files:** `src/Steper/Steper.cpp`
+
+### Added — Web UI Resets Page Scroll on Tab Switch
+
+- Switching tabs now scrolls the page back to the top of the newly selected tab (previously the page kept its scroll position).
+
+**Files:** `data/script.js`
+ 
+---
+
 ## [1.2.66] - 2026-08-28
 
 ### Changed — Serial Handshake Takes Priority Over Web
