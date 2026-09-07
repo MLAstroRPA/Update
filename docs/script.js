@@ -446,6 +446,14 @@ function updateUI(data) {
   if (data.config_pushed && data.motor) {
     showMessage('⚡ Config received from device. Applied.', '#save-message', 4000);
   }
+
+  // Đồng bộ ALIGN ALL mode (radio Admin Config) với chế độ đã lưu trên device
+  if (data.align_mode !== undefined && data.align_mode.simultaneous !== undefined) {
+    const sim = document.getElementById('align-all-mode-simultaneous');
+    const seq = document.getElementById('align-all-mode-sequential');
+    if (sim) sim.checked = !!data.align_mode.simultaneous;
+    if (seq) seq.checked = !data.align_mode.simultaneous;
+  }
   
   // Xử lý phản hồi đăng nhập Admin
   if (data.cmd === 'loginAdmin') {
@@ -1287,10 +1295,11 @@ function collectConfig() {
       swap_az_alt: document.getElementById('swap-az-alt') ? document.getElementById('swap-az-alt').checked : false
     },
     serial: {
-      baud: parseInt(document.getElementById('serial-baud').value) || 115200,
-      databits: parseInt(document.getElementById('serial-databits').value) || 8,
-      stopbits: parseFloat(document.getElementById('serial-stopbits').value) || 1,
-      parity: parseInt(document.getElementById('serial-parity').value) || 0,
+      // UI baud/databits/stopbits/parity đã bị ẩn (comment trong index.html) -> giữ giá trị mặc định/firmware
+      baud: (document.getElementById('serial-baud') && parseInt(document.getElementById('serial-baud').value)) || 115200,
+      databits: (document.getElementById('serial-databits') && parseInt(document.getElementById('serial-databits').value)) || 8,
+      stopbits: (document.getElementById('serial-stopbits') && parseFloat(document.getElementById('serial-stopbits').value)) || 1,
+      parity: (document.getElementById('serial-parity') && parseInt(document.getElementById('serial-parity').value)) || 0,
       watchdog: document.getElementById('enable-comm-watchdog') ? document.getElementById('enable-comm-watchdog').checked : true,
       simplify_telemetry: document.getElementById('simplify-telemetry-while-running') ? document.getElementById('simplify-telemetry-while-running').checked : true,
       log: document.getElementById('toggle-serial-log-btn') ? document.getElementById('toggle-serial-log-btn').checked : false
@@ -1321,6 +1330,9 @@ function collectConfig() {
       pass: document.getElementById('ap-pass').value,
       ip: document.getElementById('ap-ip').value,
       subnet: document.getElementById('ap-subnet').value,
+    },
+    align_mode: {
+      simultaneous: document.getElementById('align-all-mode-simultaneous') ? document.getElementById('align-all-mode-simultaneous').checked : true
     }
   };
 }
@@ -1333,7 +1345,17 @@ function applyConfigOnly() {
   // Nếu không nhận phản hồi trong 5s -> cảnh báo (thường do web đang bị lock bởi serial, hoặc payload bị lỗi parse).
   window._applyAckPending = true;
   showMessage('⏳ Applying settings... waiting for device confirmation...', '#save-message', 8000);
-  sendCommand('applyConfig', config);
+  const sent = sendCommand('applyConfig', config);
+  if (!sent) {
+    // Lệnh CHƯA được gửi: web bị khóa bởi PC/Serial hoặc WebSocket mất kết nối -> báo rõ ngay,
+    // tránh chờ 5s rồi hiện "No confirmation" mơ hồ.
+    window._applyAckPending = false;
+    showMessage(systemLocked
+      ? '🔒 Web is LOCKED by PC (Serial Control is Active). Disconnect the plugin or refresh to gain control.'
+      : '⚠️ WebSocket not connected. Cannot apply settings.',
+      '#save-message', 8000);
+    return;
+  }
   toggleStepsDisplay(config.motor.show_steps);
   toggleMonitorPanel(config.motor.show_hardlimit_monitor);
   setTimeout(() => {
@@ -1376,7 +1398,18 @@ if(saveAllBtn) saveAllBtn.addEventListener('click', () => {
     msgEl.textContent = '⏳ Saving to flash...';
   }
   window._saveFlow = { active: true, confirmed: false };
-  sendCommand('saveConfig', config);
+  const sent = sendCommand('saveConfig', config);
+  if (!sent) {
+    // Lệnh CHƯA được gửi: báo rõ lý do ngay (locked bởi PC/Serial hoặc WS offline).
+    window._saveFlow = null;
+    if (msgEl) {
+      msgEl.style.display = 'block';
+      msgEl.textContent = systemLocked
+        ? '🔒 Web is LOCKED by PC (Serial Control is Active). Disconnect the plugin or refresh to gain control.'
+        : '⚠️ WebSocket not connected. Cannot save settings.';
+    }
+    return;
+  }
   toggleStepsDisplay(config.motor.show_steps);
   toggleMonitorPanel(config.motor.show_hardlimit_monitor);
   
@@ -1621,6 +1654,9 @@ if(alignBtn) alignBtn.addEventListener('click', () => {
   }
   const azError = getErrorValue('az', 'az-dir');
   const altError = getErrorValue('alt', 'alt-dir');
+  // ALIGN ALL mode (radio trong Admin Config): true = chạy 2 trục cùng lúc, false = lần lượt
+  const simRadio = document.getElementById('align-all-mode-simultaneous');
+  const alignAllSimultaneous = simRadio ? simRadio.checked : false;
   
   // Tự động lưu cấu hình khi nhấn Align All
   const config = {
@@ -1643,7 +1679,8 @@ if(alignBtn) alignBtn.addEventListener('click', () => {
 
   sendCommand('align', {
     ra_error: azError,  // Mapping Az UI -> ra_error backend
-    dec_error: altError // Mapping Alt UI -> dec_error backend
+    dec_error: altError, // Mapping Alt UI -> dec_error backend
+    simultaneous: alignAllSimultaneous // ALIGN ALL mode: cùng lúc / lần lượt
   });
 });
 
@@ -1906,8 +1943,10 @@ function appendLog(message) {
   // Chuẩn bị nội dung text
   let fullText = `[${time}] ${message}`;
   
-  // Tô màu log dựa trên từ khóa
-  if (message.includes("[Apply]")) {
+  // Tô màu log dựa trên từ khóa: [Apply] = cam, [SAVE&REBOOT required] = vàng
+  if (message.includes("[SAVE&REBOOT required]")) {
+    entry.classList.add('log-reboot');
+  } else if (message.includes("[Apply]")) {
     entry.classList.add('log-apply');
   } else if (message.includes("Reset by User")) {
     entry.classList.add('log-reset');
@@ -2113,11 +2152,11 @@ if(exportLogBtn) exportLogBtn.addEventListener('click', () => {
 function sendCommand(cmd, data) {
   if (systemLocked && cmd !== 'scanWifi' && cmd !== 'setSerialLog' && cmd !== 'setCommWatchdog' && cmd !== 'resetError') {
     appendLog('WARNING: System is locked by PC (Serial Control is Active).');
-    return;
+    return false;
   }
   if (!ws || ws.readyState !== WebSocket.OPEN) {
     console.error('WebSocket not connected');
-    return;
+    return false;
   }
   
   const message = {
@@ -2126,6 +2165,7 @@ function sendCommand(cmd, data) {
   };
   
   ws.send(JSON.stringify(message));
+  return true;
 }
 
 // ===== SYSTEM LOCK (PC Serial đang điều khiển) =====

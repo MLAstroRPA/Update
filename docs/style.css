@@ -731,6 +731,7 @@ body {
 .log-success { color: green; }
 .log-backlash { color: orange; font-weight: bold; }
 .log-apply { color: orange; font-weight: bold; }
+.log-reboot { color: var(--primary); font-weight: bold; } /* Xanh giống nút APPLY: [SAVE&REBOOT required] */
 
 /* Serial log TX/RX */
 .serial-log-rx { color: #4fc3f7; }

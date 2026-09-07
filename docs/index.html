@@ -14,8 +14,8 @@
         <h1 class="brand-title">MLAstro RPA</h1>
         <p class="brand-subtitle">Robotic Polar Alignment</p>
         <div class="version-info">
-          <span id="display-fw-ver">Firmware 1.2.68</span>
-          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.68</span>
+          <span id="display-fw-ver">Firmware 1.2.69</span>
+          <span id="display-spiffs-ver" style="display:none;">spiffs 1.2.69</span>
         </div>
       </div>
       <div class="header-tools">
@@ -553,11 +553,11 @@
               </div>
               <div class="config-item">
                 <label>AP IP Address:</label>
-                <input type="text" id="ap-ip" placeholder="1.2.68.1">
+                <input type="text" id="ap-ip" placeholder="1.2.69.1">
               </div>
               <div class="config-item">
                 <label>Subnet Mask:</label>
-                <input type="text" id="ap-subnet" placeholder="1.2.68.0">
+                <input type="text" id="ap-subnet" placeholder="1.2.69.0">
               </div>
             </div>
             
@@ -599,9 +599,34 @@
           <h2>🔑 Admin Config</h2><span class="toggle-icon">▼</span>
         </div> 
         <div class="panel-content">
-          <!-- Serial Setting (moved into Admin Config) -->
+          <!-- Home (đưa lên đầu thẻ Admin Config) -->
+          <div class="config-item" style="margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+            <label>Home:</label>
+            <p style="font-size: 11px; color: var(--text-muted); margin: 6px 0 10px 0;">
+              SET HOME sets the current position as Home and as the soft-limit reference (Factory Zero).
+              RESET HOME clears the Home position — the mount must be manually repositioned afterwards.
+            </p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button id="factory-zero-btn" class="btn btn-info" style="flex: 1;">📍 SET HOME</button>
+              <button id="reset-home-btn" class="btn btn-danger" style="flex: 1;">⚠️ RESET HOME</button>
+            </div>
+          </div>
+          <!-- ALIGN ALL Mode (chọn chạy 2 trục cùng lúc hay lần lượt) -->
+          <div class="config-item" style="margin-top: 15px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+            <label>🎯 ALIGN ALL Mode:</label>
+            <p style="font-size: 11px; color: var(--text-muted); margin: 6px 0 10px 0;">
+              Choose how ALIGN ALL moves the axes to correct both errors.
+            </p>
+            <div class="radio-group">
+              <label style="display:block;"><input type="radio" name="align-all-mode" id="align-all-mode-sequential" value="sequential"> Run axes sequentially (Azimuth → Altitude)</label>
+              <label style="display:block;"><input type="radio" name="align-all-mode" id="align-all-mode-simultaneous" value="simultaneous" checked> Run both axes simultaneously</label>
+            </div>
+          </div>
+          <!-- Monitoring (đổi tên từ Serial Setting; các mục Baud/Data/Stop/Parity đã ẩn) -->
           <div class="subsection" style="margin-bottom: 15px;">
-            <h3>🔌 Serial Setting</h3>
+            <h3>📊 Monitoring</h3>
+            <!-- [UI REMOVED — giữ lại dưới dạng comment để khôi phục sau này] -->
+            <!--
             <div class="config-grid" style="grid-template-columns: repeat(2, 1fr);">
               <div class="config-item">
                 <label>Baud Rate:</label>
@@ -642,6 +667,7 @@
                 </select>
               </div>
             </div>
+            -->
             <div class="config-item" style="margin-top: 15px;">
               <label for="enable-comm-watchdog" class="checkbox-label">
                 <input type="checkbox" id="enable-comm-watchdog" class="checkbox-input" checked>
@@ -679,23 +705,6 @@
             Show current step in Control tab
           </label>
         </div>
-          <div class="config-item" style="margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px;">
-            <label>Home:</label>
-            <p style="font-size: 11px; color: var(--text-muted); margin: 6px 0 10px 0;">
-              SET HOME sets the current position as Home and as the soft-limit reference (Factory Zero).
-              RESET HOME clears the Home position — the mount must be manually repositioned afterwards.
-            </p>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-              <button id="factory-zero-btn" class="btn btn-info" style="flex: 1;">📍 SET HOME</button>
-              <button id="reset-home-btn" class="btn btn-danger" style="flex: 1;">⚠️ RESET HOME</button>
-            </div>
-          </div>
-          <div class="config-item" style="margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px;">
-            <label for="enable-softlimit" class="checkbox-label">
-              <input type="checkbox" id="enable-softlimit" class="checkbox-input" checked>
-              Enable Soft Limit
-            </label>
-          </div>
         <div class="config-item" style="margin-top: 15px;">
           <label>Max Motor RPM (Speed Level 5):</label>
           <div class="input-wrapper">
@@ -797,6 +806,13 @@
             <label for="enable-hardlimit" class="checkbox-label">
               <input type="checkbox" id="enable-hardlimit" class="checkbox-input">
               Enable Hard Limit (STALLGUARD Detection)
+            </label>
+          </div>
+          <!-- Enable Soft Limit (nằm chung nhóm với Enable Hardlimit, trên đường kẻ ngăn cách) -->
+          <div class="config-item" style="margin-top: 10px;">
+            <label for="enable-softlimit" class="checkbox-label">
+              <input type="checkbox" id="enable-softlimit" class="checkbox-input" checked>
+              Enable Soft Limit
             </label>
           </div>
         </div>
