@@ -138,5 +138,19 @@
     "version": "1.2.69",
     "size_bytes": 1507328,
     "release_date_utc": "2026-09-07T11:29:23Z"
+  },
+  "firmware 1.2.70.bin": {
+    "description": "turn OFF openload detected",
+    "type": "firmware",
+    "version": "1.2.70",
+    "size_bytes": 1236160,
+    "release_date_utc": "2026-09-07T14:46:10Z"
+  },
+  "spiffs 1.2.70.bin": {
+    "description": "turn OFF openload detected",
+    "type": "spiffs",
+    "version": "1.2.70",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-09-07T14:46:10Z"
   }
 }
