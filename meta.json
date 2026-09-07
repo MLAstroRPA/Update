@@ -551,5 +551,19 @@
     "version": "1.2.67",
     "size_bytes": 1507328,
     "release_date_utc": "2026-09-03T03:07:50Z"
+  },
+  "firmware 1.2.68.bin": {
+    "description": "Fix: bug motor no stop when reached softlimit",
+    "type": "firmware",
+    "version": "1.2.68",
+    "size_bytes": 1233584,
+    "release_date_utc": "2026-09-07T05:42:04Z"
+  },
+  "spiffs 1.2.68.bin": {
+    "description": "Fix: bug motor no stop when reached softlimit",
+    "type": "spiffs",
+    "version": "1.2.68",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-09-07T05:42:04Z"
   }
 }

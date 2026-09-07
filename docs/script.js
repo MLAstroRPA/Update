@@ -416,9 +416,29 @@ function updateUI(data) {
   if(data.status){
     console.log('WebSocket status:', data.status);
     if(data.status === 'configSaved'){
-      showMessage('✓ Settings saved to flash.', '#save-message', 3000);
+      window._applyAckPending = false;
+      if (window._saveFlow && window._saveFlow.active && !window._saveFlow.confirmed) {
+        // Chỉ hành động khi đây là ack của CHÍNH web-save (origin=webSave).
+        // configSaved từ plugin serial (ApplyConf) không có origin -> bỏ qua, vẫn chờ.
+        if (data.origin === 'webSave') {
+          window._saveFlow.confirmed = true;
+          const msgEl = document.querySelector('#save-message');
+          if (msgEl) { msgEl.style.display = 'block'; msgEl.textContent = '✓ Saved to flash. Rebooting...'; }
+          // Backend đã lưu xong -> giờ mới ra lệnh reboot, rồi reload ngay (không đếm ngược).
+          sendCommand('reboot', {});
+          setTimeout(() => location.reload(), 500);
+        }
+      } else {
+        showMessage('✓ Settings saved to flash.', '#save-message', 3000);
+      }
     } else if(data.status === 'configApplied'){
+      window._applyAckPending = false;
       showMessage('⚡ Settings applied (not saved). Reboot to discard.', '#save-message', 4000);
+    } else if(data.status === 'locked'){
+      // Web bị khóa bởi PC/Serial plugin: lệnh save/apply không được xử lý.
+      window._applyAckPending = false;
+      if (window._savePending) window._savePending = null;
+      showMessage('🔒 Web is LOCKED by PC (Serial Control is Active). Disconnect the plugin or close its connection, then reload to gain control.', '#save-message', 8000);
     }
   }
 
@@ -669,7 +689,9 @@ function updateUI(data) {
   }
   
   if (data.sys_status !== undefined) {
-    if (data.sys_status === 'REBOOTING') isRebooting = true;
+    if (data.sys_status === 'REBOOTING') {
+      isRebooting = true;
+    }
     if (isRebooting && data.sys_status !== 'REBOOTING') {
       // Đang chờ reboot: giữ nguyên trạng thái REBOOTING, không để bị ghi đè
     } else {
@@ -1307,10 +1329,19 @@ function collectConfig() {
 function applyConfigOnly() {
   if (!validateSoftLimitsBeforeSave()) return;
   const config = collectConfig();
+  // KHÔNG hiện toast thành công lạc quan nữa: chờ firmware xác nhận qua WS (status configApplied).
+  // Nếu không nhận phản hồi trong 5s -> cảnh báo (thường do web đang bị lock bởi serial, hoặc payload bị lỗi parse).
+  window._applyAckPending = true;
+  showMessage('⏳ Applying settings... waiting for device confirmation...', '#save-message', 8000);
   sendCommand('applyConfig', config);
   toggleStepsDisplay(config.motor.show_steps);
   toggleMonitorPanel(config.motor.show_hardlimit_monitor);
-  showMessage('⚡ Settings applied (not saved). Reboot to discard.', '#save-message', 4000);
+  setTimeout(() => {
+    if (window._applyAckPending) {
+      window._applyAckPending = false;
+      showMessage('⚠️ No confirmation from device. Check System Log: device may be locked by PC (serial), or the config payload failed to parse.', '#save-message', 8000);
+    }
+  }, 5000);
 }
 
 const applyBtn = document.getElementById('apply-btn');
@@ -1324,35 +1355,40 @@ if (rebootBtn) rebootBtn.addEventListener('click', () => {
   ]);
 });
 
-// ===== CONFIG SAVE =====
+// ===== CONFIG SAVE & REBOOT =====
+// Luồng chuẩn (theo yêu cầu):
+//   1) Gửi saveConfig kèm no_reboot=true -> firmware chỉ ghi FRAM (gồm cả wifi) và trả
+//      configSaved (origin=webSave), KHÔNG tự reboot.
+//   2) Frontend nhận configSaved có origin=webSave => biết chắc backend ĐÃ lưu thành công.
+//   3) Frontend mới gửi lệnh reboot.
+//   4) Reload ngay (không đếm ngược). Firmware restart sau ~500ms nên reload kịp
+//      trước khi server tắt; trang mới tự kết nối lại khi device online.
 const saveAllBtn = document.getElementById('save-all-btn');
 if(saveAllBtn) saveAllBtn.addEventListener('click', () => {
   if (!validateSoftLimitsBeforeSave()) {
     return;
   }
   const config = collectConfig();
-  
-  sendCommand('saveConfig', config);
-  setRebootingStatus();
-  toggleStepsDisplay(config.motor.show_steps); // Cập nhật hiển thị ngay lập tức
-  toggleMonitorPanel(config.motor.show_hardlimit_monitor);
-  
-  let countdown = 5;
+  config.no_reboot = true; // chỉ lưu, đừng reboot; frontend tự reboot sau khi xác nhận đã lưu
   const msgEl = document.querySelector('#save-message');
   if(msgEl) {
     msgEl.style.display = 'block';
-    msgEl.textContent = `Settings saved. Refreshing in ${countdown}s...`;
-    
-    const interval = setInterval(() => {
-      countdown--;
-      if(countdown <= 0) {
-        clearInterval(interval);
-        location.reload();
-      } else {
-        msgEl.textContent = `Settings saved. Refreshing in ${countdown}s...`;
-      }
-    }, 1000);
+    msgEl.textContent = '⏳ Saving to flash...';
   }
+  window._saveFlow = { active: true, confirmed: false };
+  sendCommand('saveConfig', config);
+  toggleStepsDisplay(config.motor.show_steps);
+  toggleMonitorPanel(config.motor.show_hardlimit_monitor);
+  
+  setTimeout(() => {
+    if (window._saveFlow && window._saveFlow.active && !window._saveFlow.confirmed) {
+      window._saveFlow = null;
+      if (msgEl) {
+        msgEl.style.display = 'block';
+        msgEl.textContent = '⚠️ No confirmation from device. Check System Log: device may be locked by PC (serial), or the config payload failed to parse.';
+      }
+    }
+  }, 7000);
 });
 
 bindSoftLimitInputGuards();
@@ -1492,21 +1528,6 @@ const btnForceStop = document.getElementById('btn-force-stop');
 if(btnForceStop) btnForceStop.addEventListener('click', () => { sendCommand('forceStop', {}); });
 
 // ===== HOME BUTTONS =====
-const setHomeBtn = document.getElementById('set-home-btn');
-if(setHomeBtn) setHomeBtn.addEventListener('click', () => {
-  showModal(
-    'Confirm Set Home',
-    'Set home position at current location?',
-    [
-      { text: 'Yes, Set Home', class: 'btn-warning', callback: () => {
-        sendCommand('setHome', {});
-        showMessage('Home position set!', '#save-message', 2000);
-      }},
-      { text: 'Cancel', class: 'btn-secondary' }
-    ]
-  );
-});
-
 const returnHomeBtn = document.getElementById('return-home-btn');
 if(returnHomeBtn) returnHomeBtn.addEventListener('click', () => {
   // Kiểm tra trạng thái lỗi trước khi gửi lệnh
@@ -1516,7 +1537,7 @@ if(returnHomeBtn) returnHomeBtn.addEventListener('click', () => {
   }
   // Kiểm tra nếu chưa Set Home thì báo lỗi và không gửi lệnh
   if (!isSystemHomed) {
-    showModal('Action Blocked', 'You have not set a home position yet. Please use "SET HOME HERE" first.', [{ text: 'OK', class: 'btn-warning' }]);
+    showModal('Action Blocked', 'You have not set a home position yet. Please use "SET HOME" first.', [{ text: 'OK', class: 'btn-warning' }]);
     return;
   }
   sendCommand('returnHome', {});
@@ -1595,7 +1616,7 @@ if(alignBtn) alignBtn.addEventListener('click', () => {
     return;
   }
   if (!isSystemHomed) { 
-    showModal('Action Blocked', 'You have not set a home position yet. Please use "SET HOME HERE" first.', [{ text: 'OK', class: 'btn-warning' }]);
+    showModal('Action Blocked', 'You have not set a home position yet. Please use "SET HOME" first.', [{ text: 'OK', class: 'btn-warning' }]);
     return; 
   }
   const azError = getErrorValue('az', 'az-dir');
@@ -1725,15 +1746,15 @@ const factoryZeroBtn = document.getElementById('factory-zero-btn');
 if (factoryZeroBtn) {
   factoryZeroBtn.addEventListener('click', () => {
     showModal(
-      'Confirm Factory Zero',
-      'Set current position as <strong>Factory Zero</strong>?<br>This also applies <strong>SET HOME HERE</strong> at the same time.',
+      'Confirm Set Home',
+      'Set current position as <strong>Home</strong>?<br>This also sets the soft-limit reference (Factory Zero) at the current position.',
       [
         {
-          text: 'Set Factory Zero',
-          class: 'btn-danger',
+          text: 'Yes, Set Home',
+          class: 'btn-primary',
           callback: () => {
             sendCommand('setFactoryZero', {});
-            showMessage('Factory Zero set. Home updated.', '#save-message', 3000);
+            showMessage('Home position set!', '#save-message', 3000);
           }
         },
         { text: 'Cancel', class: 'btn-secondary' }
@@ -2112,6 +2133,13 @@ function applySystemLock(locked) {
   if (systemLocked === locked) return;
   systemLocked = locked;
   document.body.classList.toggle('system-locked', locked);
+  // Khóa luôn các ô nhập text/number (+textarea/select): set readonly để không sửa được
+  // qua bàn phím nữa (CSS đã chặn click/làm mờ). Chỉ chạy khi trạng thái thay đổi.
+  const editableSel = 'input[type="text"], input[type="number"], input[type="password"], input[type="search"], input[type="tel"], input[type="email"], input[type="url"], input[type="date"], textarea';
+  document.querySelectorAll(editableSel).forEach((el) => {
+    if (locked) el.setAttribute('readonly', 'readonly');
+    else el.removeAttribute('readonly');
+  });
   updateMotionControls();
   if (locked) {
     appendLog('WARNING: System is locked by PC (Serial Control is Active).');
@@ -3419,6 +3447,12 @@ if (statusLink) {
 document.addEventListener('keydown', (e) => {
   // Nếu đang nhập liệu (input/textarea) thì không xử lý phím tắt (để gõ được dấu cách)
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  // Bỏ qua auto-repeat khi GIỮ phím: chỉ gửi ĐÚNG 1 lệnh "move" cho mỗi lần nhấn.
+  // Nếu không, giữ phím mũi tên → trình duyệt lặp keydown → spam "move" qua WebSocket,
+  // mỗi lệnh lại tái-kích hoạt move(±1e9) → nuốt lệnh dừng soft-limit/STOP/ESTOP
+  // (motor cứ chạy qua biên, STOP "không dừng", phải thả phím mới dừng hẳn).
+  if (e.repeat) return;
 
   const speedLevel = document.querySelector('.speed-btn.active').dataset.level;
   

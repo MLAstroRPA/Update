@@ -702,6 +702,12 @@ body {
   flex: 1;
 }
 
+/* RETURN TO HOME & ALIGN ALL: same width (equal big action buttons) */
+.home-buttons .btn,
+.alignment-inputs > .btn {
+  min-width: 250px;
+}
+
 /* HISTORY */
 .history-list {
   max-height: 300px;
@@ -749,6 +755,28 @@ body.system-locked .log-btn {
   pointer-events: auto;
   opacity: 1;
   cursor: pointer;
+}
+
+/* Khóa luôn các ô nhập (text/number/password + textarea/select) khi Serial đang giữ quyền:
+   không cho click/focus, làm mờ để nhận biết đang read-only. Checkbox/radio/range/button giữ nguyên. */
+body.system-locked input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="color"]):not([type="file"]),
+body.system-locked textarea,
+body.system-locked select {
+  pointer-events: none;
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Khóa luôn TẤT CẢ checkbox/radio trong tab CONFIG khi Serial đang giữ quyền
+   (reverse, spread/stealth mode, backlash, overshoot, soft/hard limit, ...). */
+body.system-locked #config-tab input[type="checkbox"],
+body.system-locked #config-tab input[type="radio"] {
+  pointer-events: none;
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+body.system-locked #config-tab label {
+  cursor: not-allowed;
 }
 
 .history-empty {
@@ -997,6 +1025,10 @@ body.system-locked .log-btn {
   }
 
   .alignment-inputs > .btn {
+    width: 100%;
+  }
+
+  .home-buttons .btn {
     width: 100%;
   }
 
@@ -1311,6 +1343,63 @@ input, textarea {
 .log-header-title { display: flex; align-items: center; }
 .log-btn { font-size: 12px; padding: 4px 8px; margin-right: 5px; }
 .log-actions { display: flex; align-items: center; }
+
+/* System Log header: make the 3 action buttons equal height (stretch to the tallest) */
+#log-panel-section .log-actions {
+  align-items: stretch;
+}
+#log-panel-section .log-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Serial Log header: controls equal height; when they no longer fit on one horizontal
+   row they wrap to new lines (vertical stack) instead of overflowing. */
+#serial-log-panel .log-actions {
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+#serial-log-panel .log-actions > .checkbox-label,
+#serial-log-panel .log-actions > .btn {
+  justify-content: center;
+}
+#serial-log-panel .log-actions > .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Serial Log: when the controls no longer fit on one horizontal row, stack them
+   vertically - each control on its own full-width line. */
+@media (max-width: 1070px) {
+  #serial-log-panel .log-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  #serial-log-panel .log-actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    flex-wrap: nowrap;
+    margin-top: 4px;
+  }
+  #serial-log-panel .log-actions > .checkbox-label {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 6px;
+    justify-content: flex-start;
+  }
+  /* Clear button: keep it a compact button that fits its text (not a full-width bar) */
+  #serial-log-panel .log-actions > .btn {
+    width: fit-content;
+    min-width: 110px;
+    min-height: 33px;
+    margin-right: 0;
+    margin-bottom: 6px;
+    justify-content: center;
+  }
+}
 
 /* --- ADMIN & CONFIG STYLES --- */
 .admin-panel { display: none; }

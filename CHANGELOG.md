@@ -4,6 +4,45 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 
 ---
 
+## [1.2.68] - 2026-09-07
+
+### Fixed — Web APPLY / SAVE & REBOOT Did Nothing (Large WebSocket Messages Lost)
+
+- ESPAsyncWebServer delivered one browser WS frame across multiple `WS_EVT_DATA` callbacks when its payload spanned several TCP packets (a full config payload is ~1.3 KB and was almost always split). `wsEvent` parsed each fragment on its own → `WS JSON parse error: IncompleteInput / InvalidInput` → `saveConfig`/`applyConfig` never ran (small jog/stop commands fit one packet, so they still worked).
+- Fix: `wsEvent` now reassembles WS text fragments (`info->index` / `info->len` / `info->final`, including continuation frames) and dispatches the command only when the whole message has arrived. Incoming JSON is parsed into a heap-backed `DynamicJsonDocument(8192)`; parse failures are logged with the exact error code + message length.
+
+**Files:** `src/Web/WebControl.cpp`
+
+### Changed — Web SAVE & REBOOT Confirms the Save Before Rebooting
+
+- SAVE ALL & REBOOT is now a two-step handshake: the browser sends `saveConfig` with `no_reboot=true`; the firmware writes FRAM (including WiFi/AP) and replies `configSaved` tagged `origin=webSave` **without auto-rebooting**; only then does the browser send `reboot` and reload immediately (no fake countdown).
+- APPLY no longer shows an optimistic "applied" toast — it waits for the real `configApplied` ack and warns if the device never confirms (locked by Serial / payload error).
+- A `configSaved` from the Serial plugin (no `origin=webSave`) no longer triggers a web reboot.
+- The manual REBOOT button still sends `reboot` directly.
+
+**Files:** `data/script.js`, `src/Web/WebControl.cpp`
+
+### Changed — Serial `Save&Reboot` No Longer Auto-Reboots
+
+- `Save&Reboot:1` now only writes all settings to FRAM, sends the independent notification line `All Setting Saved`, and replies `ok` — it no longer prints `REBOOTING` or schedules a 5 s auto-reboot. The PC/plugin is responsible for the actual reboot (e.g. reset the ESP32 via the serial EN pin / DTR-RTS) after it receives `All Setting Saved`.
+- `ApplyConf` keeps its original behavior (persist + apply, plain `ok`, no extra notification).
+
+**Files:** `src/Serial/SerialControl.cpp`, `src/Serial-protocol.md`
+
+### Changed — Backlash Logs Now Show Compensated Steps and Arc-Minutes
+
+- Every `(Backlash applied)` log line now reports the amount compensated, e.g. `(Backlash applied | 8333 step | 5.000')` (arc-minutes = `steps / stepsPerDegree × 60`), on Web jog / Align / Return-to-Home **and** the equivalent Serial jog / Align paths.
+
+**Files:** `src/Web/WebControl.cpp`, `src/Serial/SerialControl.cpp`, `src/main.cpp`
+
+### Changed — Web UI Fully Read-Only While Serial Holds Control
+
+- Besides the movement buttons, the UI now also locks the editable fields when the Serial (PC) master has the handshake: text/number/password inputs, `textarea`, `select`, and every checkbox/radio in the **CONFIG** tab are disabled/dimmed (`pointer-events:none` + `readonly`), preventing accidental edits that could not be sent anyway.
+
+**Files:** `data/style.css`, `data/script.js`
+
+---
+
 ## [1.2.67] - 2026-09-03
 
 ### Changed — Faster & More Reliable Open-Load (Motor-Not-Connected) Detection
