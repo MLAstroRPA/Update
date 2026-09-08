@@ -152,5 +152,19 @@
     "version": "1.2.70",
     "size_bytes": 1507328,
     "release_date_utc": "2026-09-07T14:46:10Z"
+  },
+  "firmware 1.2.71.bin": {
+    "description": "fix: remake Open-Load Detection Now Reads the Driver's OLA/OLB Flags (SG_RESULT Dropped)",
+    "type": "firmware",
+    "version": "1.2.71",
+    "size_bytes": 1236288,
+    "release_date_utc": "2026-09-08T12:32:15Z"
+  },
+  "spiffs 1.2.71.bin": {
+    "description": "fix: remake Open-Load Detection Now Reads the Driver's OLA/OLB Flags (SG_RESULT Dropped)",
+    "type": "spiffs",
+    "version": "1.2.71",
+    "size_bytes": 1507328,
+    "release_date_utc": "2026-09-08T12:32:15Z"
   }
 }

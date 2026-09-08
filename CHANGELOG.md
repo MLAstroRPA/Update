@@ -4,6 +4,27 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 
 ---
 
+
+## [1.2.71] - 2026-09-08
+
+### Fixed — Open-Load Detection Now Reads the Driver's OLA/OLB Flags (SG_RESULT Dropped)
+
+- StallGuard `SG_RESULT` measures **mechanical load**, not wiring health — under StealthChop / during acceleration it is meaningless, so a healthy connected motor was frequently misreported as *"Motor not connected / no back-EMF"*.
+- Open-load is now detected from the TMC2209 driver's own hardware flags **`OLA`/`OLB`** (`DRV_STATUS` bits 6/7): the driver measures coil current and sets the bit for any coil that cannot conduct (motor unplugged / broken wire). The bits come from the `DRV_STATUS` value already read — no extra UART traffic.
+- Trusted only when the UART read is clean (`drvOk=true`) inside the running window (after the settle period); a failed read while running is still ignored.
+- Debounce unchanged (`OPEN_LOAD_CONSECUTIVE_CHECKS = 3`, ~0.9 s) so transient noise cannot trigger a false error; the confirmed log line is now `ERROR <axis>: Open load! (OLA=x OLB=y)`.
+- While open-load is suspected/confirmed, hard-limit detection stays suppressed on Core 1 — an unplugged motor never looks like a physical hard limit (no false reverse-run).
+
+**Files:** `src/Steper/Steper.cpp`
+
+---
+
+## [1.2.70] - 2026-09-07
+### hotfix: remove openload detect
+
+## [1.2.69] - 2026-09-07
+### fix: Bug reset ESP when press APPLY
+
 ## [1.2.68] - 2026-09-07
 
 ### Fixed — Web APPLY / SAVE & REBOOT Did Nothing (Large WebSocket Messages Lost)
