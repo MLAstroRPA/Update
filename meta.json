@@ -168,14 +168,14 @@
     "release_date_utc": "2026-09-08T12:32:15Z"
   },
   "firmware 1.2.72.bin": {
-    "description": "fix: Move relative đi not apply backlash",
+    "description": "fix: Move relative did not apply backlash",
     "type": "firmware",
     "version": "1.2.72",
     "size_bytes": 1237088,
     "release_date_utc": "2026-09-11T15:52:04Z"
   },
   "spiffs 1.2.72.bin": {
-    "description": "fix: Move relative đi not apply backlash",
+    "description": "fix: Move relative did not apply backlash",
     "type": "spiffs",
     "version": "1.2.72",
     "size_bytes": 1507328,
