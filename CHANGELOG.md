@@ -5,6 +5,24 @@ All notable changes to MLAstroRPA Webserver will be documented in this file.
 ---
 
 
+## [1.2.72] - 2026-09-11
+
+### Fixed — Backlash Compensation Now Really Moves the Axis on Relative (Step) Moves
+
+- `applyBacklashCompensation()` only shifts the origin (`setCurrentPosition`) and commands **no motion by itself**. That is correct for **absolute** targets (`moveTo`: Align / Return-Home / auto-center) because the shifted origin enlarges `distanceToGo`, so the motor really travels the extra slack. For **relative** targets (`move(steps)`) the target is `currentPos + steps`, so `distanceToGo` stayed exactly `steps` — the motor travelled no extra steps and the mechanical slack swallowed the whole move (13' backlash + a 5" step = axis did not move at all) even though the log printed `(Backlash applied)`.
+- New `applyBacklashCompensationRelative(stepper, lastDir, newDir, backlashSteps, long &steps)` (`Steper.cpp` / `Steper.h`) keeps the origin shift **and adds the slack to the commanded distance** (`steps += newDir * backlashSteps`, skipped when `steps == 0`), so the axis really moves the requested angle while the position counter still ends on the true axis position.
+- Applied to **both** relative paths: Web `moveRelative` and the Serial relative branch (`JoRe:1` + `MAzL/MAzR/MAlU/MAlD`). Continuous jog (`move(±1e9)`) and absolute moves are unchanged.
+
+### Changed — Relative-Move Logs Now Report the Backlash Compensation (Web + Serial)
+
+- Web `moveRelative` discarded the compensation result and never logged it — a relative step now prints `RELATIVE MOVE: Axis=…, Angle=… deg, Steps=<real travel incl. slack> (Backlash applied | N step | X.XXX')`, the same format used by jog / Align / Return-Home.
+- Serial relative moves no longer share the `MANUAL MOVING` line: they log the same `RELATIVE MOVE: …` line as the Web (still delivered through the WebSocket system log), so a relative step is distinguishable from a continuous jog.
+- Web relative handler now clamps the speed level to 1–5 (as the jog handler does) to avoid an out-of-range index / `setMaxSpeed(0)`.
+
+**Files:** `src/Steper/Steper.cpp`, `src/Steper/Steper.h`, `src/Web/WebControl.cpp`, `src/Serial/SerialControl.cpp`, `src/main.cpp`, `data/index.html`
+
+---
+
 ## [1.2.71] - 2026-09-08
 
 ### Fixed — Open-Load Detection Now Reads the Driver's OLA/OLB Flags (SG_RESULT Dropped)
